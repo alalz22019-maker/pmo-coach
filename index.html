@@ -6,192 +6,309 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="PMO Coach">
-<title>Executive PMO Coach</title>
+<title>Executive PMO Coach 2.0</title>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
-:root {
-  --navy: #0a0e1a; --navy2: #111827; --navy3: #1a2236; --navy4: #243047;
-  --gold: #c9a84c; --gold2: #e8c96a; --gold-dim: rgba(201,168,76,0.15);
-  --green: #22c55e; --green-dim: rgba(34,197,94,0.12);
-  --blue: #3b82f6; --blue-dim: rgba(59,130,246,0.12);
-  --red: #ef4444; --text: #f1f5f9; --text2: #94a3b8; --text3: #475569;
-  --border: rgba(255,255,255,0.06); --border2: rgba(255,255,255,0.1);
-  --r: 16px; --safe-top: env(safe-area-inset-top,44px); --safe-bottom: env(safe-area-inset-bottom,34px);
+:root{
+  --navy:#0a0e1a;--navy2:#111827;--navy3:#1a2236;--navy4:#243047;
+  --gold:#c9a84c;--gold2:#e8c96a;--gold-dim:rgba(201,168,76,0.15);--gold-dim2:rgba(201,168,76,0.08);
+  --green:#22c55e;--green-dim:rgba(34,197,94,0.12);
+  --blue:#3b82f6;--blue-dim:rgba(59,130,246,0.1);
+  --purple:#a855f7;--purple-dim:rgba(168,85,247,0.12);
+  --red:#ef4444;--red-dim:rgba(239,68,68,0.12);
+  --orange:#f97316;--orange-dim:rgba(249,115,22,0.12);
+  --text:#f1f5f9;--text2:#94a3b8;--text3:#475569;
+  --border:rgba(255,255,255,0.06);--border2:rgba(255,255,255,0.1);
+  --r:16px;--safe-top:env(safe-area-inset-top,44px);--safe-bottom:env(safe-area-inset-bottom,34px);
 }
-* { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
-body { font-family:'IBM Plex Sans Arabic',sans-serif; background:var(--navy); color:var(--text); min-height:100dvh; }
-.safe-top { height:var(--safe-top); } .safe-bottom { height:calc(var(--safe-bottom) + 70px); }
-.screen { display:none; animation:fadeIn 0.3s ease; } .screen.active { display:block; }
-@keyframes fadeIn { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:none} }
-.bottom-nav { position:fixed; bottom:0; left:0; right:0; height:calc(var(--safe-bottom) + 70px); background:rgba(10,14,26,0.95); backdrop-filter:blur(20px); border-top:1px solid var(--border2); display:flex; align-items:flex-start; padding-top:10px; z-index:100; }
-.nav-item { flex:1; display:flex; flex-direction:column; align-items:center; gap:4px; cursor:pointer; padding:4px 0; }
-.nav-icon { font-size:22px; transition:transform 0.2s; } .nav-label { font-size:10px; color:var(--text3); }
-.nav-item.active .nav-icon { transform:scale(1.15); } .nav-item.active .nav-label { color:var(--gold); }
-.header { padding:16px 20px 12px; position:sticky; top:var(--safe-top); z-index:50; background:rgba(10,14,26,0.9); backdrop-filter:blur(20px); }
-.header-title { font-size:22px; font-weight:700; } .header-sub { font-size:13px; color:var(--text2); margin-top:2px; }
-.content { padding:0 16px 16px; }
-.progress-wrap { margin:8px 0 4px; } .progress-label { display:flex; justify-content:space-between; font-size:12px; color:var(--text2); margin-bottom:6px; }
-.progress-track { background:var(--navy4); border-radius:99px; height:6px; overflow:hidden; }
-.progress-fill { height:100%; border-radius:99px; background:linear-gradient(90deg,var(--gold),var(--gold2)); transition:width 0.6s cubic-bezier(.34,1.56,.64,1); }
-.card { background:var(--navy2); border:1px solid var(--border); border-radius:var(--r); padding:16px; margin-bottom:12px; }
-.card-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:10px; }
-.card-icon { font-size:24px; } .card-badge { font-size:11px; font-weight:600; padding:3px 10px; border-radius:99px; background:var(--gold-dim); color:var(--gold); }
-.card-badge.done { background:var(--green-dim); color:var(--green); }
-.card-title { font-size:16px; font-weight:600; margin-bottom:4px; } .card-sub { font-size:13px; color:var(--text2); }
-.card-btn { width:100%; margin-top:14px; padding:12px; border-radius:12px; border:none; cursor:pointer; font-family:'IBM Plex Sans Arabic',sans-serif; font-size:14px; font-weight:600; transition:all 0.2s; }
-.card-btn.primary { background:var(--gold); color:var(--navy); } .card-btn.secondary { background:var(--navy3); color:var(--text); border:1px solid var(--border2); }
-.welcome-banner { background:linear-gradient(135deg,var(--navy3),var(--navy4)); border:1px solid rgba(201,168,76,0.2); border-radius:var(--r); padding:20px; margin:12px 16px; position:relative; overflow:hidden; }
-.welcome-title { font-size:18px; font-weight:700; color:var(--gold); margin-bottom:6px; } .welcome-sub { font-size:13px; color:var(--text2); line-height:1.6; }
-.stats-row { display:flex; gap:10px; padding:0 16px 4px; }
-.stat-box { flex:1; background:var(--navy2); border:1px solid var(--border); border-radius:14px; padding:12px; text-align:center; }
-.stat-num { font-size:22px; font-weight:700; color:var(--gold); } .stat-lbl { font-size:11px; color:var(--text2); margin-top:2px; }
-.phase-header { background:linear-gradient(135deg,var(--navy3),var(--navy4)); border-bottom:1px solid var(--border2); padding:16px 16px 20px; }
-.back-btn { display:inline-flex; align-items:center; gap:6px; font-size:13px; color:var(--gold); cursor:pointer; margin-bottom:12px; background:none; border:none; font-family:'IBM Plex Sans Arabic',sans-serif; }
-.phase-emoji { font-size:32px; margin-bottom:8px; } .phase-title { font-size:20px; font-weight:700; } .phase-desc { font-size:13px; color:var(--text2); margin-top:4px; }
-.task-item { background:var(--navy2); border:1px solid var(--border); border-radius:var(--r); padding:14px 16px; margin-bottom:10px; cursor:pointer; display:flex; align-items:center; gap:12px; transition:all 0.2s; }
-.task-item.done { border-color:rgba(34,197,94,0.25); background:rgba(34,197,94,0.04); }
-.task-check { width:26px; height:26px; border-radius:50%; border:2px solid var(--border2); flex-shrink:0; display:flex; align-items:center; justify-content:center; font-size:13px; }
-.task-item.done .task-check { background:var(--green); border-color:var(--green); }
-.task-name { font-size:14px; font-weight:500; } .task-meta { font-size:12px; color:var(--text2); margin-top:2px; }
-.modal-overlay { position:fixed; inset:0; z-index:200; background:rgba(0,0,0,0.7); backdrop-filter:blur(8px); display:none; align-items:flex-end; }
-.modal-overlay.open { display:flex; }
-.modal { background:var(--navy2); border-radius:24px 24px 0 0; width:100%; max-height:90dvh; overflow-y:auto; padding:20px 20px calc(var(--safe-bottom) + 20px); border-top:1px solid var(--border2); animation:slideUp 0.35s cubic-bezier(.34,1.56,.64,1); }
-@keyframes slideUp { from{transform:translateY(100%)} to{transform:none} }
-.modal-handle { width:40px; height:4px; background:var(--border2); border-radius:99px; margin:0 auto 16px; }
-.modal-title { font-size:17px; font-weight:700; margin-bottom:16px; }
-.field-group { margin-bottom:14px; } .field-label { font-size:12px; font-weight:600; color:var(--gold); letter-spacing:0.5px; margin-bottom:6px; display:block; }
-.field-desc { font-size:11px; color:var(--text3); margin-bottom:6px; }
-textarea { width:100%; background:var(--navy3); border:1px solid var(--border2); border-radius:12px; padding:12px; color:var(--text); font-family:'IBM Plex Sans Arabic',sans-serif; font-size:14px; resize:none; outline:none; min-height:80px; }
-textarea:focus { border-color:rgba(201,168,76,0.4); }
-.ai-feedback { background:linear-gradient(135deg,rgba(59,130,246,0.08),rgba(201,168,76,0.05)); border:1px solid rgba(59,130,246,0.2); border-radius:14px; padding:14px; margin-top:12px; display:none; }
-.ai-feedback.visible { display:block; animation:fadeIn 0.4s ease; }
-.ai-label { font-size:11px; font-weight:700; color:var(--blue); letter-spacing:0.5px; }
-.ai-text { font-size:13px; color:var(--text2); line-height:1.7; margin-top:8px; }
-.ai-score { display:inline-flex; align-items:center; gap:4px; background:var(--gold-dim); color:var(--gold); font-size:12px; font-weight:700; padding:3px 10px; border-radius:99px; margin-top:8px; }
-.flashcard { background:var(--navy2); border:1px solid var(--border); border-radius:var(--r); padding:20px; cursor:pointer; margin-bottom:6px; min-height:140px; }
-.flashcard.flipped { border-color:rgba(201,168,76,0.25); background:rgba(201,168,76,0.04); }
-.fc-back { display:none; } .flashcard.flipped .fc-front { display:none; } .flashcard.flipped .fc-back { display:block; animation:fadeIn 0.3s ease; }
-.fc-term { font-size:20px; font-weight:700; color:var(--gold); margin-bottom:6px; } .fc-hint { font-size:12px; color:var(--text3); }
-.fc-def { font-size:14px; line-height:1.7; margin-bottom:10px; } .fc-example { font-size:12px; color:var(--text2); background:var(--navy3); border-radius:10px; padding:10px; }
-.fc-example-label { font-size:11px; color:var(--gold); font-weight:600; margin-bottom:4px; }
-.mastered-btn { width:100%; margin-top:10px; padding:10px; border-radius:12px; border:none; cursor:pointer; font-family:'IBM Plex Sans Arabic',sans-serif; font-size:13px; font-weight:600; background:var(--green-dim); color:var(--green); border:1px solid rgba(34,197,94,0.2); }
-.mastered-btn.done { background:var(--green); color:#000; }
-.check-item { display:flex; align-items:flex-start; gap:12px; background:var(--navy2); border:1px solid var(--border); border-radius:var(--r); padding:14px 16px; margin-bottom:10px; cursor:pointer; }
-.check-item.done { border-color:rgba(34,197,94,0.25); background:rgba(34,197,94,0.04); }
-.check-box { width:22px; height:22px; flex-shrink:0; margin-top:1px; border-radius:6px; border:2px solid var(--border2); display:flex; align-items:center; justify-content:center; font-size:12px; }
-.check-item.done .check-box { background:var(--green); border-color:var(--green); }
-.check-text { font-size:14px; line-height:1.6; } .check-item.done .check-text { color:var(--text2); text-decoration:line-through; }
-.ai-question-card { background:linear-gradient(135deg,var(--navy3),var(--navy4)); border:1px solid rgba(59,130,246,0.2); border-radius:var(--r); padding:18px; margin-bottom:14px; }
-.ai-q-label { font-size:11px; color:var(--blue); font-weight:700; margin-bottom:8px; letter-spacing:0.5px; }
-.ai-q-text { font-size:15px; font-weight:600; line-height:1.6; } .ai-q-type { font-size:11px; color:var(--text3); margin-top:6px; }
-.setting-item { display:flex; align-items:center; justify-content:space-between; background:var(--navy2); border:1px solid var(--border); border-radius:var(--r); padding:16px; margin-bottom:10px; }
-.danger-btn { padding:10px 18px; border-radius:12px; border:none; cursor:pointer; font-family:'IBM Plex Sans Arabic',sans-serif; font-size:13px; font-weight:600; background:rgba(239,68,68,0.12); color:var(--red); border:1px solid rgba(239,68,68,0.2); }
-.spinner { width:20px; height:20px; border-radius:50%; border:2px solid rgba(59,130,246,0.2); border-top-color:var(--blue); animation:spin 0.7s linear infinite; display:inline-block; }
-@keyframes spin { to{transform:rotate(360deg)} }
-.section-label { font-size:11px; font-weight:700; letter-spacing:1px; color:var(--text3); text-transform:uppercase; padding:16px 16px 8px; }
-.toast { position:fixed; top:calc(var(--safe-top) + 12px); left:50%; transform:translateX(-50%); background:var(--green); color:#000; font-weight:600; font-size:13px; padding:10px 20px; border-radius:99px; z-index:500; opacity:0; pointer-events:none; transition:opacity 0.3s; white-space:nowrap; }
-.toast.show { opacity:1; }
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+body{font-family:'IBM Plex Sans Arabic',sans-serif;background:var(--navy);color:var(--text);min-height:100dvh;overflow-x:hidden;}
+.safe-top{height:var(--safe-top);}.safe-bottom{height:calc(var(--safe-bottom)+74px);}
+.screen{display:none;animation:fadeIn 0.3s ease;}.screen.active{display:block;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.5}}
+.bottom-nav{position:fixed;bottom:0;left:0;right:0;height:calc(var(--safe-bottom)+74px);background:rgba(8,12,24,0.97);backdrop-filter:blur(24px);border-top:1px solid var(--border2);display:flex;align-items:flex-start;padding-top:8px;z-index:100;}
+.nav-item{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;padding:4px 2px;transition:all 0.2s;}
+.nav-icon{font-size:20px;transition:transform 0.2s;}.nav-label{font-size:9px;color:var(--text3);transition:color 0.2s;text-align:center;}
+.nav-item.active .nav-icon{transform:scale(1.2);}.nav-item.active .nav-label{color:var(--gold);}
+.header{padding:14px 18px 10px;position:sticky;top:var(--safe-top);z-index:50;background:rgba(10,14,26,0.92);backdrop-filter:blur(20px);}
+.header-title{font-size:20px;font-weight:700;}.header-sub{font-size:12px;color:var(--text2);margin-top:1px;}
+.content{padding:0 14px 14px;}
+.progress-wrap{margin:6px 0 4px;}.progress-label{display:flex;justify-content:space-between;font-size:11px;color:var(--text2);margin-bottom:5px;}
+.progress-track{background:var(--navy4);border-radius:99px;height:5px;overflow:hidden;}
+.progress-fill{height:100%;border-radius:99px;background:linear-gradient(90deg,var(--gold),var(--gold2));transition:width 0.7s cubic-bezier(.34,1.56,.64,1);}
+.card{background:var(--navy2);border:1px solid var(--border);border-radius:var(--r);padding:14px;margin-bottom:10px;}
+.card-title{font-size:15px;font-weight:600;margin-bottom:4px;}.card-sub{font-size:12px;color:var(--text2);}
+.badge{font-size:10px;font-weight:700;padding:2px 9px;border-radius:99px;}
+.badge-gold{background:var(--gold-dim);color:var(--gold);}.badge-green{background:var(--green-dim);color:var(--green);}
+.badge-blue{background:var(--blue-dim);color:var(--blue);}.badge-purple{background:var(--purple-dim);color:var(--purple);}
+.btn{width:100%;padding:12px;border-radius:12px;border:none;cursor:pointer;font-family:'IBM Plex Sans Arabic',sans-serif;font-size:13px;font-weight:600;transition:all 0.2s;display:flex;align-items:center;justify-content:center;gap:8px;}
+.btn:active{transform:scale(0.97);}
+.btn-gold{background:var(--gold);color:var(--navy);}.btn-navy{background:var(--navy3);color:var(--text);border:1px solid var(--border2);}
+.btn-blue{background:var(--blue-dim);color:var(--blue);border:1px solid rgba(59,130,246,0.2);}
+.btn-purple{background:var(--purple-dim);color:var(--purple);border:1px solid rgba(168,85,247,0.2);}
+.btn-green{background:var(--green-dim);color:var(--green);border:1px solid rgba(34,197,94,0.2);}
+.btn-red{background:var(--red-dim);color:var(--red);border:1px solid rgba(239,68,68,0.2);}
+.btn-sm{padding:8px 14px;width:auto;font-size:12px;border-radius:10px;}
+.welcome-banner{background:linear-gradient(135deg,var(--navy3),var(--navy4));border:1px solid rgba(201,168,76,0.2);border-radius:var(--r);padding:18px;margin:10px 14px;position:relative;overflow:hidden;}
+.welcome-title{font-size:17px;font-weight:700;color:var(--gold);margin-bottom:4px;}.welcome-sub{font-size:12px;color:var(--text2);line-height:1.6;}
+.stats-row{display:flex;gap:8px;padding:0 14px 4px;}
+.stat-box{flex:1;background:var(--navy2);border:1px solid var(--border);border-radius:14px;padding:10px;text-align:center;}
+.stat-num{font-size:20px;font-weight:700;color:var(--gold);}.stat-lbl{font-size:10px;color:var(--text2);margin-top:1px;}
+.mood-row{display:flex;gap:8px;margin-top:10px;}
+.mood-btn{flex:1;padding:10px 6px;border-radius:12px;border:2px solid transparent;cursor:pointer;font-family:'IBM Plex Sans Arabic',sans-serif;font-size:12px;font-weight:600;display:flex;flex-direction:column;align-items:center;gap:4px;transition:all 0.2s;background:var(--navy3);}
+.mood-btn.green{border-color:var(--green);background:var(--green-dim);color:var(--green);}
+.mood-btn.yellow{border-color:#eab308;background:rgba(234,179,8,0.12);color:#eab308;}
+.mood-btn.red{border-color:var(--red);background:var(--red-dim);color:var(--red);}
+.section-label{font-size:10px;font-weight:700;letter-spacing:1.2px;color:var(--text3);text-transform:uppercase;padding:14px 14px 6px;}
+.level-tabs{display:flex;gap:6px;padding:10px 14px 0;}
+.level-tab{flex:1;padding:8px 4px;border-radius:10px;border:1px solid var(--border);background:var(--navy3);font-family:'IBM Plex Sans Arabic',sans-serif;font-size:11px;font-weight:600;color:var(--text2);cursor:pointer;text-align:center;transition:all 0.2s;}
+.level-tab.active{background:var(--gold-dim);border-color:rgba(201,168,76,0.3);color:var(--gold);}
+.flashcard{background:var(--navy2);border:1px solid var(--border);border-radius:var(--r);padding:16px;cursor:pointer;margin-bottom:8px;}
+.flashcard.flipped{border-color:rgba(201,168,76,0.25);background:rgba(201,168,76,0.03);}
+.fc-term{font-size:18px;font-weight:700;color:var(--gold);margin-bottom:2px;}.fc-term-ar{font-size:13px;color:var(--text2);margin-bottom:6px;}.fc-hint{font-size:11px;color:var(--text3);}
+.fc-back{display:none;animation:fadeIn 0.3s ease;}
+.flashcard.flipped .fc-front{display:none;}.flashcard.flipped .fc-back{display:block;}
+.fc-def{font-size:13px;line-height:1.7;margin-bottom:8px;}
+.fc-example{font-size:11px;color:var(--text2);background:var(--navy3);border-radius:10px;padding:10px;margin-bottom:10px;}
+.fc-ex-label{font-size:10px;color:var(--gold);font-weight:700;margin-bottom:3px;}
+.gemini-result{background:linear-gradient(135deg,rgba(59,130,246,0.08),rgba(201,168,76,0.05));border:1px solid rgba(59,130,246,0.15);border-radius:12px;padding:12px;margin-top:10px;display:none;animation:fadeIn 0.4s ease;}
+.gemini-result.visible{display:block;}.gemini-label{font-size:10px;font-weight:700;color:var(--blue);letter-spacing:0.5px;margin-bottom:6px;}
+.gemini-text{font-size:12px;color:var(--text2);line-height:1.8;}
+.mastered-btn{width:100%;margin-top:8px;padding:9px;border-radius:10px;border:none;cursor:pointer;font-family:'IBM Plex Sans Arabic',sans-serif;font-size:12px;font-weight:600;background:var(--green-dim);color:var(--green);border:1px solid rgba(34,197,94,0.2);}
+.mastered-btn.done{background:var(--green);color:#000;}
+.modal-overlay{position:fixed;inset:0;z-index:200;background:rgba(0,0,0,0.75);backdrop-filter:blur(10px);display:none;align-items:flex-end;}
+.modal-overlay.open{display:flex;}
+.modal{background:var(--navy2);border-radius:24px 24px 0 0;width:100%;max-height:92dvh;overflow-y:auto;padding:18px 18px calc(var(--safe-bottom)+18px);border-top:1px solid var(--border2);animation:slideUp 0.35s cubic-bezier(.34,1.56,.64,1);}
+@keyframes slideUp{from{transform:translateY(100%)}to{transform:none}}
+.modal-handle{width:36px;height:4px;background:var(--border2);border-radius:99px;margin:0 auto 14px;}
+.field-group{margin-bottom:12px;}.field-label{font-size:11px;font-weight:600;color:var(--gold);letter-spacing:0.5px;margin-bottom:5px;display:block;}
+textarea,input[type=text],input[type=password]{width:100%;background:var(--navy3);border:1px solid var(--border2);border-radius:12px;padding:11px;color:var(--text);font-family:'IBM Plex Sans Arabic',sans-serif;font-size:13px;resize:none;outline:none;}
+textarea:focus,input:focus{border-color:rgba(201,168,76,0.4);}
+.timer-ring{width:80px;height:80px;position:relative;margin:0 auto 14px;}
+.timer-ring svg{transform:rotate(-90deg);}
+.timer-ring circle{fill:none;stroke-width:5;}.timer-ring .bg{stroke:var(--navy4);}.timer-ring .fg{stroke:var(--gold);stroke-linecap:round;transition:stroke-dashoffset 1s linear;}
+.timer-num{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-size:22px;font-weight:700;color:var(--gold);}
+.memory-card-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:12px 0;}
+.mem-card{background:var(--navy3);border:1px solid var(--border2);border-radius:12px;padding:12px;text-align:center;font-size:12px;line-height:1.5;}
+.chat-area{background:var(--navy3);border-radius:14px;padding:12px;margin-bottom:10px;min-height:200px;max-height:340px;overflow-y:auto;display:flex;flex-direction:column;gap:8px;}
+.chat-msg{padding:10px 12px;border-radius:12px;font-size:13px;line-height:1.6;max-width:90%;}
+.chat-msg.ai{background:var(--blue-dim);border:1px solid rgba(59,130,246,0.15);align-self:flex-start;}
+.chat-msg.user{background:var(--gold-dim);border:1px solid rgba(201,168,76,0.15);align-self:flex-end;text-align:right;}
+.chat-msg.system{background:var(--navy4);color:var(--text2);font-size:11px;text-align:center;align-self:center;}
+.voice-controls{display:flex;gap:8px;align-items:center;}
+.mic-btn{width:54px;height:54px;border-radius:50%;border:none;cursor:pointer;font-size:22px;display:flex;align-items:center;justify-content:center;transition:all 0.2s;flex-shrink:0;}
+.mic-btn.idle{background:var(--navy3);border:2px solid var(--border2);}
+.mic-btn.listening{background:var(--red-dim);border:2px solid var(--red);animation:pulse 1s infinite;}
+.mic-btn.processing{background:var(--blue-dim);border:2px solid var(--blue);}
+.report-card{background:linear-gradient(135deg,var(--navy3),var(--navy4));border:1px solid var(--border2);border-radius:var(--r);padding:16px;margin-bottom:10px;}
+.report-section-title{font-size:13px;font-weight:700;color:var(--gold);margin-bottom:8px;display:flex;align-items:center;gap:6px;}
+.report-text{font-size:12px;color:var(--text2);line-height:1.8;}
+.log-item{display:flex;align-items:flex-start;gap:10px;padding:10px 0;border-bottom:1px solid var(--border);}
+.log-dot{width:8px;height:8px;border-radius:50%;background:var(--gold);flex-shrink:0;margin-top:4px;}
+.log-text{font-size:12px;color:var(--text2);flex:1;}.log-time{font-size:10px;color:var(--text3);}
+.setting-item{display:flex;align-items:center;justify-content:space-between;background:var(--navy2);border:1px solid var(--border);border-radius:var(--r);padding:14px;margin-bottom:8px;}
+.spinner{width:18px;height:18px;border-radius:50%;border:2px solid rgba(59,130,246,0.2);border-top-color:var(--blue);animation:spin 0.7s linear infinite;display:inline-block;flex-shrink:0;}
+.spinner-gold{border-color:var(--gold-dim);border-top-color:var(--gold);}
+.toast{position:fixed;top:calc(var(--safe-top)+10px);left:50%;transform:translateX(-50%);background:var(--navy3);border:1px solid var(--border2);color:var(--text);font-size:12px;font-weight:600;padding:9px 18px;border-radius:99px;z-index:500;opacity:0;pointer-events:none;transition:opacity 0.3s;white-space:nowrap;}
+.toast.show{opacity:1;}
+.empty-state{text-align:center;padding:32px 16px;color:var(--text3);font-size:13px;}
+.empty-icon{font-size:36px;margin-bottom:10px;}
 </style>
 </head>
 <body>
 <div class="safe-top"></div>
 <div id="screen-home" class="screen active">
-  <div class="header"><div class="header-title">Executive PMO Coach</div><div class="header-sub">خطة تدريبية مكثفة للمقابلات التنفيذية</div></div>
-  <div class="welcome-banner"><div class="welcome-title">مرحباً، علي 👋</div><div class="welcome-sub">أنت على بُعد 3 مراحل من إتقان مقابلتك التنفيذية.</div>
-  <div class="progress-wrap" style="margin-top:16px;"><div class="progress-label"><span>التقدم الإجمالي</span><span id="total-pct">0%</span></div><div class="progress-track"><div class="progress-fill" id="total-bar" style="width:0%"></div></div></div></div>
-  <div class="stats-row"><div class="stat-box"><div class="stat-num" id="stat-stories">0</div><div class="stat-lbl">قصص STAR</div></div><div class="stat-box"><div class="stat-num" id="stat-terms">0</div><div class="stat-lbl">مصطلحات</div></div><div class="stat-box"><div class="stat-num" id="stat-checks">0</div><div class="stat-lbl">تحضيرات</div></div></div>
-  <div class="section-label">مراحل التدريب</div>
-  <div class="content">
-    <div class="card" onclick="goPhase(1)"><div class="card-header"><span class="card-icon">⭐</span><span class="card-badge" id="badge1">0/5</span></div><div class="card-title">المرحلة الأولى: العمق الفني</div><div class="card-sub">بناء 5 قصص STAR مع تحليل Gemini</div><div class="progress-wrap"><div class="progress-track"><div class="progress-fill" id="bar1" style="width:0%"></div></div></div><button class="card-btn primary" onclick="event.stopPropagation();goPhase(1)">ابدأ التدريب ←</button></div>
-    <div class="card" onclick="goPhase(2)"><div class="card-header"><span class="card-icon">🧠</span><span class="card-badge" id="badge2">0/10</span></div><div class="card-title">المرحلة الثانية: المصطلحات التقنية</div><div class="card-sub">10 مصطلحات PMO بطريقة Flashcards</div><div class="progress-wrap"><div class="progress-track"><div class="progress-fill" id="bar2" style="width:0%"></div></div></div><button class="card-btn primary" onclick="event.stopPropagation();goPhase(2)">ابدأ التدريب ←</button></div>
-    <div class="card" onclick="goPhase(3)"><div class="card-header"><span class="card-icon">🎯</span><span class="card-badge" id="badge3">0/5</span></div><div class="card-title">المرحلة الثالثة: هندسة الحوار</div><div class="card-sub">قائمة تحقق + أسئلة مقابلة بالذكاء الاصطناعي</div><div class="progress-wrap"><div class="progress-track"><div class="progress-fill" id="bar3" style="width:0%"></div></div></div><button class="card-btn primary" onclick="event.stopPropagation();goPhase(3)">ابدأ التدريب ←</button></div>
-  </div><div class="safe-bottom"></div>
+  <div class="header"><div class="header-title">Executive PMO Coach</div><div class="header-sub" id="home-date"></div></div>
+  <div class="welcome-banner"><div class="welcome-title">مرحباً، علي 👋</div><div class="welcome-sub">مستواك يتحدد بما تفعله يومياً — ابدأ الآن.</div>
+  <div class="progress-wrap" style="margin-top:14px;"><div class="progress-label"><span>التقدم الإجمالي</span><span id="total-pct">0%</span></div><div class="progress-track"><div class="progress-fill" id="total-bar" style="width:0%"></div></div></div></div>
+  <div class="section-label">الحالة الذهنية</div>
+  <div style="padding:0 14px;">
+    <div class="mood-row">
+      <button class="mood-btn" id="mood-green" onclick="setMood('green')"><span style="font-size:20px;">🟢</span>جاهز</button>
+      <button class="mood-btn" id="mood-yellow" onclick="setMood('yellow')"><span style="font-size:20px;">🟡</span>متعب</button>
+      <button class="mood-btn" id="mood-red" onclick="setMood('red')"><span style="font-size:20px;">🔴</span>مرهق</button>
+    </div>
+  </div>
+  <div class="stats-row" style="margin-top:10px;">
+    <div class="stat-box"><div class="stat-num" id="stat-terms">0</div><div class="stat-lbl">مصطلح</div></div>
+    <div class="stat-box"><div class="stat-num" id="stat-gym">0</div><div class="stat-lbl">تحدي</div></div>
+    <div class="stat-box"><div class="stat-num" id="stat-log">0</div><div class="stat-lbl">نشاط</div></div>
+  </div>
+  <div class="section-label">آخر الأنشطة</div>
+  <div class="content"><div id="home-log"></div></div>
+  <div class="safe-bottom"></div>
 </div>
 
-<div id="screen-phase1" class="screen">
-  <div class="phase-header"><button class="back-btn" onclick="goHome()">→ الرئيسية</button><div class="phase-emoji">⭐</div><div class="phase-title">قصص STAR الذهبية الخمس</div><div class="phase-desc">اكتب قصتك واحصل على تحليل من Gemini</div>
-  <div class="progress-wrap" style="margin-top:14px;"><div class="progress-label"><span>الإنجاز</span><span id="p1-pct">0%</span></div><div class="progress-track"><div class="progress-fill" id="p1-bar" style="width:0%"></div></div></div></div>
-  <div id="star-list" class="content" style="padding-top:14px;"></div><div class="safe-bottom"></div>
+<div id="screen-lexicon" class="screen">
+  <div class="header"><div class="header-title">قاموس القيادة</div><div class="header-sub">المصطلحات التنفيذية بشرح Gemini</div></div>
+  <div class="level-tabs">
+    <button class="level-tab active" id="tab-op" onclick="setLevel('operational')">تشغيلي</button>
+    <button class="level-tab" id="tab-tac" onclick="setLevel('tactical')">تكتيكي</button>
+    <button class="level-tab" id="tab-exe" onclick="setLevel('executive')">تنفيذي</button>
+  </div>
+  <div id="flashcard-list" class="content" style="padding-top:12px;"></div>
+  <div class="safe-bottom"></div>
 </div>
 
-<div id="screen-phase2" class="screen">
-  <div class="phase-header"><button class="back-btn" onclick="goHome()">→ الرئيسية</button><div class="phase-emoji">🧠</div><div class="phase-title">المصطلحات التقنية</div><div class="phase-desc">انقر على البطاقة لعرض التعريف</div>
-  <div class="progress-wrap" style="margin-top:14px;"><div class="progress-label"><span>الإنجاز</span><span id="p2-pct">0%</span></div><div class="progress-track"><div class="progress-fill" id="p2-bar" style="width:0%"></div></div></div></div>
-  <div id="flashcard-list" class="content" style="padding-top:14px;"></div><div class="safe-bottom"></div>
+<div id="screen-gym" class="screen">
+  <div class="header"><div class="header-title">النادي الذهني</div><div class="header-sub">تمارين تقوّي عقلك القيادي</div></div>
+  <div class="content" style="padding-top:12px;">
+    <div class="card" style="border-color:rgba(201,168,76,0.2);">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
+        <div><div class="card-title">⚡ تحدي الـ 60 ثانية</div><div class="card-sub">أزمة مشروع — قرارك في دقيقة</div></div>
+        <span class="badge badge-gold" id="gym-score-badge">0 تحدي</span>
+      </div>
+      <div id="challenge-area"><button class="btn btn-gold" onclick="startChallenge()">ابدأ التحدي ←</button></div>
+    </div>
+    <div class="card" style="border-color:rgba(168,85,247,0.2);">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
+        <div><div class="card-title">🧩 ذاكرة المدير</div><div class="card-sub">احفظ المعلومات تحت الضغط</div></div>
+        <span class="badge badge-purple" id="memory-score">0/0</span>
+      </div>
+      <div id="memory-area"><button class="btn btn-purple" onclick="startMemory()">ابدأ التمرين ←</button></div>
+    </div>
+  </div>
+  <div class="safe-bottom"></div>
 </div>
 
-<div id="screen-phase3" class="screen">
-  <div class="phase-header"><button class="back-btn" onclick="goHome()">→ الرئيسية</button><div class="phase-emoji">🎯</div><div class="phase-title">هندسة الحوار</div><div class="phase-desc">قائمة التحقق + أسئلة بالذكاء الاصطناعي</div>
-  <div class="progress-wrap" style="margin-top:14px;"><div class="progress-label"><span>التحضيرات</span><span id="p3-pct">0%</span></div><div class="progress-track"><div class="progress-fill" id="p3-bar" style="width:0%"></div></div></div></div>
-  <div class="section-label">قائمة التحقق</div>
-  <div id="checklist" class="content" style="padding-top:0;"></div>
-  <div class="section-label">أسئلة مقابلة من Gemini</div>
-  <div class="content"><button class="card-btn primary" id="gen-q-btn" onclick="generateQuestions()" style="margin-bottom:14px;">✨ توليد أسئلة جديدة</button><div id="questions-area"></div></div>
+<div id="screen-boardroom" class="screen">
+  <div class="header"><div class="header-title">غرفة الاجتماعات</div><div class="header-sub">مقابلة تنفيذية بالذكاء الاصطناعي</div></div>
+  <div class="content" style="padding-top:12px;">
+    <div class="card" style="margin-bottom:10px;">
+      <div style="display:flex;gap:8px;margin-bottom:10px;flex-wrap:wrap;">
+        <button class="btn btn-sm btn-navy" onclick="setBoardroomLang('ar')" id="br-ar">🇸🇦 عربي</button>
+        <button class="btn btn-sm btn-navy" onclick="setBoardroomLang('en')" id="br-en">🇺🇸 English</button>
+        <button class="btn btn-sm btn-red" onclick="clearBoardroom()" style="margin-right:auto;">🗑</button>
+      </div>
+      <div class="chat-area" id="chat-area"></div>
+      <div class="voice-controls" style="margin-top:10px;">
+        <button class="mic-btn idle" id="mic-btn" onclick="toggleMic()">🎤</button>
+        <div style="flex:1;"><div id="transcript-preview" style="font-size:12px;color:var(--text2);min-height:20px;background:var(--navy3);border-radius:10px;padding:8px;"></div></div>
+        <button class="btn btn-sm btn-blue" id="send-voice-btn" onclick="sendTranscript()" style="display:none;">إرسال</button>
+      </div>
+    </div>
+    <button class="btn btn-gold" onclick="startBoardroomSession()">🎬 بدء جلسة جديدة</button>
+  </div>
+  <div class="safe-bottom"></div>
+</div>
+
+<div id="screen-analytics" class="screen">
+  <div class="header"><div class="header-title">المستشار الذكي</div><div class="header-sub">تحليل أدائك بالذكاء الاصطناعي</div></div>
+  <div class="content" style="padding-top:12px;">
+    <button class="btn btn-gold" id="report-btn" onclick="generateReport()" style="margin-bottom:14px;">📊 استخراج تقرير الأداء الشامل</button>
+    <div id="report-area"></div>
+    <div class="section-label" style="padding-right:0;">سجل النشاط</div>
+    <div id="full-log"></div>
+  </div>
   <div class="safe-bottom"></div>
 </div>
 
 <div id="screen-settings" class="screen">
   <div class="header"><div class="header-title">الإعدادات</div></div>
-  <div class="content" style="padding-top:14px;">
-    <div class="setting-item"><div><div style="font-size:14px;font-weight:500;">مفتاح Gemini API</div><div style="font-size:12px;color:var(--text2);">جاهز ✓</div></div><span style="font-size:20px;">🔑</span></div>
-    <div class="setting-item"><div><div style="font-size:14px;font-weight:500;">إجمالي التقدم</div><div style="font-size:12px;color:var(--text2);" id="progress-summary">0 من 20 مهمة</div></div><span style="font-size:20px;">📊</span></div>
-    <div class="setting-item" style="flex-direction:column;align-items:flex-start;gap:12px;"><div><div style="font-size:14px;font-weight:500;">إعادة ضبط كل شيء</div><div style="font-size:12px;color:var(--text2);">مسح جميع البيانات</div></div><button class="danger-btn" onclick="resetAll()">🗑 إعادة الضبط</button></div>
-  </div><div class="safe-bottom"></div>
+  <div class="content" style="padding-top:12px;">
+    <div class="card">
+      <div class="card-title" style="margin-bottom:10px;">🔑 مفتاح Gemini API</div>
+      <input type="password" id="api-key-input" placeholder="AIzaSy...">
+      <button class="btn btn-gold" onclick="saveApiKey()" style="margin-top:8px;">حفظ المفتاح</button>
+      <div id="api-key-status" style="font-size:11px;color:var(--text2);margin-top:6px;text-align:center;"></div>
+    </div>
+    <div class="setting-item"><div><div style="font-size:13px;font-weight:500;">إجمالي الأنشطة</div><div style="font-size:11px;color:var(--text2);" id="total-activities">0 نشاط</div></div><span style="font-size:20px;">📈</span></div>
+    <div class="setting-item" style="flex-direction:column;align-items:flex-start;gap:10px;"><div><div style="font-size:13px;font-weight:500;">إعادة ضبط كل شيء</div><div style="font-size:11px;color:var(--text2);">مسح جميع البيانات</div></div><button class="btn btn-red btn-sm" onclick="resetAll()">🗑 إعادة الضبط</button></div>
+    <div style="text-align:center;padding:20px 0;color:var(--text3);font-size:11px;">Executive PMO Coach v2.0</div>
+  </div>
+  <div class="safe-bottom"></div>
 </div>
+
 <nav class="bottom-nav">
   <div class="nav-item active" id="nav-home" onclick="switchNav('home')"><span class="nav-icon">🏠</span><span class="nav-label">الرئيسية</span></div>
-  <div class="nav-item" id="nav-phase1" onclick="switchNav('phase1');goPhase(1)"><span class="nav-icon">⭐</span><span class="nav-label">STAR</span></div>
-  <div class="nav-item" id="nav-phase2" onclick="switchNav('phase2');goPhase(2)"><span class="nav-icon">🧠</span><span class="nav-label">مصطلحات</span></div>
-  <div class="nav-item" id="nav-phase3" onclick="switchNav('phase3');goPhase(3)"><span class="nav-icon">🎯</span><span class="nav-label">مقابلة</span></div>
-  <div class="nav-item" id="nav-settings" onclick="switchNav('settings')"><span class="nav-icon">⚙️</span><span class="nav-label">إعدادات</span></div>
+  <div class="nav-item" id="nav-lexicon" onclick="switchNav('lexicon');renderLexicon()"><span class="nav-icon">📚</span><span class="nav-label">القاموس</span></div>
+  <div class="nav-item" id="nav-gym" onclick="switchNav('gym')"><span class="nav-icon">🧠</span><span class="nav-label">النادي</span></div>
+  <div class="nav-item" id="nav-boardroom" onclick="switchNav('boardroom');initBoardroom()"><span class="nav-icon">🎤</span><span class="nav-label">الاجتماع</span></div>
+  <div class="nav-item" id="nav-analytics" onclick="switchNav('analytics');renderAnalytics()"><span class="nav-icon">📊</span><span class="nav-label">المستشار</span></div>
 </nav>
-
-<div class="modal-overlay" id="star-modal" onclick="if(event.target===this)closeModal()">
-  <div class="modal">
-    <div class="modal-handle"></div>
-    <div class="modal-title" id="modal-story-title">قصة STAR</div>
-    <div class="field-group"><label class="field-label">S — الموقف</label><div class="field-desc">صف السياق والمشكلة</div><textarea id="f-situation" rows="3" placeholder="مثال: كنت مسؤولاً عن مشروع متأخر بـ 3 أشهر..."></textarea></div>
-    <div class="field-group"><label class="field-label">T — المهمة</label><div class="field-desc">ما كانت مسؤوليتك؟</div><textarea id="f-task" rows="3" placeholder="مثال: إعادة هيكلة الخطة خلال أسبوعين..."></textarea></div>
-    <div class="field-group"><label class="field-label">A — الإجراء</label><div class="field-desc">ماذا فعلت بالتحديد؟</div><textarea id="f-action" rows="4" placeholder="أولاً: عقدت اجتماع طارئ. ثانياً: أعدت توزيع الموارد..."></textarea></div>
-    <div class="field-group"><label class="field-label">R — النتيجة</label><div class="field-desc">بالأرقام والمقاييس</div><textarea id="f-result" rows="3" placeholder="تم التسليم في الموعد مع وفر 8 مليون ريال..."></textarea></div>
-    <button class="card-btn primary" id="analyze-btn" onclick="analyzeSTAR()">✨ تحليل بـ Gemini وحفظ</button>
-    <div class="ai-feedback" id="ai-feedback"><div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;"><span style="font-size:16px;">🤖</span><span class="ai-label">تحليل Gemini</span></div><div class="ai-text" id="ai-feedback-text"></div><div class="ai-score" id="ai-score"></div></div>
-    <button class="card-btn secondary" style="margin-top:10px;" onclick="saveStory()">💾 حفظ بدون تحليل</button>
-    <button class="card-btn secondary" style="margin-top:8px;" onclick="closeModal()">إلغاء</button>
-  </div>
-</div>
 <div class="toast" id="toast"></div>
 <script>
-const GEMINI_KEY='AIzaSyDPk6gcUqOfymtW2yypWKMxA3UV1I0y6Dc';
-const GEMINI_URL=`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${GEMINI_KEY}`;
-const STAR_STORIES=[{id:'s1',title:'إنقاذ مشروع متعثر',desc:'مشروع تأخر أو واجه أزمة'},{id:'s2',title:'قيادة فريق متعدد الجهات',desc:'تنسيق بين أكثر من جهة'},{id:'s3',title:'إدارة تغيير استراتيجي',desc:'تحول تنظيمي أو رقمي'},{id:'s4',title:'توفير موارد أو تكاليف',desc:'مبادرة حققت وفراً ملموساً'},{id:'s5',title:'مواجهة مقاومة التغيير',desc:'إقناع جهات مترددة'}];
-const TERMS=[{term:'Scope Creep',def:'التمدد غير المخطط في نطاق المشروع دون تغيير رسمي.',ex:'تحكمت فيه بتفعيل نموذج Change Request رسمي.'},{term:'Resource Leveling',def:'توزيع الموارد بشكل متوازن لتجنب التعارض.',ex:'طبّقته حين كانت 3 مشاريع تتنافس على نفس الفريق.'},{term:'Change Control Board',def:'لجنة رسمية تراجع وتوافق على التغييرات.',ex:'أسّستها وخفّضت التغييرات غير المعتمدة 60%.'},{term:'Risk Mitigation',def:'إجراءات استباقية للتخفيف من المخاطر.',ex:'بنيت سجل مخاطر شهري لكل مشروع كبير.'},{term:'Earned Value Management',def:'منهجية EVM تقيس الأداء بدمج النطاق والجدول والتكلفة.',ex:'استخدمت CPI/SPI لإقناع القيادة بإعادة جدولة مشروع.'},{term:'Agile vs Waterfall',def:'Waterfall للنطاق الثابت، Agile للنطاق المتغير.',ex:'طبّقت Hybrid في مشاريع التحول الرقمي.'},{term:'Stakeholder Engagement',def:'إدارة منهجية لتوقعات أصحاب المصلحة.',ex:'صنّفتهم Power/Interest Matrix وصممت تواصلاً لكل فئة.'},{term:'Quality Assurance',def:'عمليات ضمان الجودة الاستباقية لمنع العيوب.',ex:'نفّذت QA gates بعد كل مرحلة تسليم.'},{term:'CPI / SPI',def:'مؤشرا الأداء: كفاءة التكلفة والجدول — القيمة أكبر من 1 جيدة.',ex:'رفعت SPI من 0.75 إلى 1.1 بخطة تعافٍ موجّهة.'},{term:'PMO Governance',def:'إطار الحوكمة الذي يضبط سياسات اتخاذ القرار.',ex:'صممت نموذج حوكمة ثلاثي: تشغيلي / تكتيكي / استراتيجي.'}];
-const CHECKLIST=[{id:'c1',text:'تحديث السيرة الذاتية قبل المقابلة بـ 24 ساعة'},{id:'c2',text:'تطبيق قاعدة الثواني الثلاث قبل أي إجابة'},{id:'c3',text:'التخلص من الكلمات الحشوية (Yeah, So, Uhm)'},{id:'c4',text:'تحضير 3 أسئلة ذكية لسؤال المحاور'},{id:'c5',text:'استخدام لغة الأرقام في كل إجابة'}];
-let state={stories:{},mastered:{},checks:{},savedQuestions:[]};
-let currentStoryId=null;
-function loadState(){try{const s=localStorage.getItem('pmo_coach_v1');if(s)state=JSON.parse(s);}catch(e){}}
-function saveState(){try{localStorage.setItem('pmo_coach_v1',JSON.stringify(state));}catch(e){}}
-function switchNav(id){document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));document.getElementById('nav-'+id)?.classList.add('active');document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById('screen-'+id)?.classList.add('active');window.scrollTo(0,0);}
-function goHome(){switchNav('home');updateUI();}
-function goPhase(n){switchNav('phase'+n);if(n===1)renderStarList();if(n===2)renderFlashcards();if(n===3)renderChecklist();updateProgress();}
-function renderStarList(){document.getElementById('star-list').innerHTML=STAR_STORIES.map(s=>{const done=state.stories[s.id]?.done;return`<div class="task-item ${done?'done':''}" onclick="openStarModal('${s.id}')"><div class="task-check">${done?'✓':''}</div><div><div class="task-name">${s.title}</div><div class="task-meta">${s.desc}</div></div></div>`;}).join('');}
-function openStarModal(id){currentStoryId=id;const story=STAR_STORIES.find(s=>s.id===id);const saved=state.stories[id]||{};document.getElementById('modal-story-title').textContent=story.title;document.getElementById('f-situation').value=saved.situation||'';document.getElementById('f-task').value=saved.task||'';document.getElementById('f-action').value=saved.action||'';document.getElementById('f-result').value=saved.result||'';const fb=document.getElementById('ai-feedback');fb.classList.remove('visible');if(saved.feedback){document.getElementById('ai-feedback-text').textContent=saved.feedback;document.getElementById('ai-score').textContent=saved.score||'';fb.classList.add('visible');}document.getElementById('analyze-btn').textContent='✨ تحليل بـ Gemini وحفظ';document.getElementById('analyze-btn').disabled=false;document.getElementById('star-modal').classList.add('open');}
-function closeModal(){document.getElementById('star-modal').classList.remove('open');}
-async function analyzeSTAR(){const btn=document.getElementById('analyze-btn');const s=document.getElementById('f-situation').value.trim();const t=document.getElementById('f-task').value.trim();const a=document.getElementById('f-action').value.trim();const r=document.getElementById('f-result').value.trim();if(!s||!t||!a||!r){showToast('أكمل جميع الحقول');return;}btn.innerHTML='<span class="spinner"></span> جارٍ التحليل...';btn.disabled=true;const prompt=`أنت خبير مقابلات تنفيذية. حلّل هذه القصة STAR:\nالموقف: ${s}\nالمهمة: ${t}\nالإجراء: ${a}\nالنتيجة: ${r}\nقدّم: نقاط القوة، نقاط التحسين، كيف تقويها، وتقييم من 10. أجب بالعربية مختصراً.`;try{const res=await fetch(GEMINI_URL,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({contents:[{parts:[{text:prompt}]}]})});const data=await res.json();const text=data.candidates?.[0]?.content?.parts?.[0]?.text||'تعذّر التحليل.';const scoreMatch=text.match(/(\d+)\s*\/\s*10/);const score=scoreMatch?`⭐ ${scoreMatch[0]}`:'';if(!state.stories[currentStoryId])state.stories[currentStoryId]={};state.stories[currentStoryId]={situation:s,task:t,action:a,result:r,done:true,feedback:text,score};saveState();updateUI();renderStarList();updateProgress();document.getElementById('ai-feedback-text').textContent=text;document.getElementById('ai-score').textContent=score;document.getElementById('ai-feedback').classList.add('visible');btn.innerHTML='✅ تم الحفظ';showToast('✅ القصة محفوظة!');}catch(e){btn.innerHTML='✨ تحليل بـ Gemini وحفظ';btn.disabled=false;showToast('خطأ في الاتصال');}}
-function saveStory(){const s=document.getElementById('f-situation').value.trim();const t=document.getElementById('f-task').value.trim();const a=document.getElementById('f-action').value.trim();const r=document.getElementById('f-result').value.trim();if(!state.stories[currentStoryId])state.stories[currentStoryId]={};Object.assign(state.stories[currentStoryId],{situation:s,task:t,action:a,result:r,done:!!(s&&t&&a&&r)});saveState();updateUI();renderStarList();updateProgress();closeModal();showToast('💾 تم الحفظ');}
-function renderFlashcards(){document.getElementById('flashcard-list').innerHTML=TERMS.map((term,i)=>{const mastered=state.mastered[i];return`<div><div class="flashcard ${mastered?'flipped':''}" id="fc-${i}" onclick="flipCard(${i})"><div class="fc-front"><div class="fc-term">${term.term}</div><div class="fc-hint">انقر للتعريف ←</div></div><div class="fc-back"><div class="fc-def">${term.def}</div><div class="fc-example"><div class="fc-example-label">مثال:</div>${term.ex}</div></div></div><button class="mastered-btn ${mastered?'done':''}" onclick="toggleMastered(${i})">${mastered?'✓ أتقنت':'أتقنت هذا المصطلح'}</button></div>`;}).join('');}
-function flipCard(i){document.getElementById('fc-'+i).classList.toggle('flipped');}
-function toggleMastered(i){state.mastered[i]=!state.mastered[i];saveState();updateUI();renderFlashcards();updateProgress();if(state.mastered[i])showToast('🧠 ممتاز!');}
-function renderChecklist(){document.getElementById('checklist').innerHTML=CHECKLIST.map(c=>{const done=state.checks[c.id];return`<div class="check-item ${done?'done':''}" onclick="toggleCheck('${c.id}')"><div class="check-box">${done?'✓':''}</div><div class="check-text">${c.text}</div></div>`;}).join('');}
-function toggleCheck(id){state.checks[id]=!state.checks[id];saveState();updateUI();renderChecklist();updateProgress();}
-async function generateQuestions(){const btn=document.getElementById('gen-q-btn');btn.innerHTML='<span class="spinner"></span> Gemini يولّد...';btn.disabled=true;const doneStories=Object.entries(state.stories).filter(([k,v])=>v.done).map(([k])=>STAR_STORIES.find(s=>s.id===k)?.title).filter(Boolean);const context=doneStories.length?`لديه قصص في: ${doneStories.join('، ')}`:'مدير PMO خبير في وزارة حكومية';const prompt=`ولّد 5 أسئلة مقابلة صعبة لمدير PMO يتقدم لدور قيادي رفيع. السياق: ${context}. أجب بـ JSON فقط: [{"q":"السؤال","type":"نوع السؤال"}]`;try{const res=await fetch(GEMINI_URL,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({contents:[{parts:[{text:prompt}]}]})});const data=await res.json();let text=data.candidates?.[0]?.content?.parts?.[0]?.text||'[]';text=text.replace(/```json|```/g,'').trim();const questions=JSON.parse(text);state.savedQuestions=questions;saveState();document.getElementById('questions-area').innerHTML=questions.map((q,i)=>`<div class="ai-question-card"><div class="ai-q-label">سؤال ${i+1}</div><div class="ai-q-text">${q.q}</div><div class="ai-q-type">${q.type}</div></div>`).join('');btn.innerHTML='✨ توليد أسئلة جديدة';btn.disabled=false;showToast('✅ تم توليد الأسئلة!');}catch(e){btn.innerHTML='✨ توليد أسئلة جديدة';btn.disabled=false;showToast('خطأ في الاتصال');}}
-function updateProgress(){const s=Object.values(state.stories).filter(x=>x.done).length;const t=Object.values(state.mastered).filter(Boolean).length;const c=Object.values(state.checks).filter(Boolean).length;const total=Math.round((s+t+c)/20*100);setBar('p1-bar','p1-pct',Math.round(s/5*100));setBar('p2-bar','p2-pct',Math.round(t/10*100));setBar('p3-bar','p3-pct',Math.round(c/5*100));setBar('total-bar','total-pct',total);document.getElementById('bar1').style.width=Math.round(s/5*100)+'%';document.getElementById('bar2').style.width=Math.round(t/10*100)+'%';document.getElementById('bar3').style.width=Math.round(c/5*100)+'%';document.getElementById('badge1').textContent=`${s}/5`;document.getElementById('badge2').textContent=`${t}/10`;document.getElementById('badge3').textContent=`${c}/5`;document.getElementById('stat-stories').textContent=s;document.getElementById('stat-terms').textContent=t;document.getElementById('stat-checks').textContent=c;document.getElementById('progress-summary').textContent=`${s+t+c} من 20 مهمة`;}
-function setBar(barId,pctId,pct){const b=document.getElementById(barId);const p=document.getElementById(pctId);if(b)b.style.width=pct+'%';if(p)p.textContent=pct+'%';}
-function updateUI(){updateProgress();}
-function resetAll(){if(!confirm('مسح كل البيانات؟'))return;state={stories:{},mastered:{},checks:{},savedQuestions:[]};saveState();updateUI();showToast('🔄 تم الضبط');}
+const SK='pmo_coach_v1',SK_API='pmo_gemini_key',SK_LOG='user_activity_log',SK_REPORT='pmo_last_report',SK_MOOD='pmo_mood';
+const TERMS={
+  operational:[
+    {term:'Scope Creep',ar:'زحف النطاق',def:'التمدد غير المخطط في نطاق المشروع.',ex:'فعّلت Change Request رسمي لكل طلب جديد.'},
+    {term:'Resource Leveling',ar:'تسوية الموارد',def:'توزيع الموارد لتجنب التعارض.',ex:'طبّقته حين تنافست 3 مشاريع على نفس الفريق.'},
+    {term:'Work Breakdown Structure',ar:'هيكل تفصيل العمل',def:'تقسيم المشروع لمكونات قابلة للإدارة.',ex:'بنيت WBS لمشروع تحول رقمي بـ 200 حزمة عمل.'},
+    {term:'Critical Path',ar:'المسار الحرج',def:'أطول تسلسل من المهام يحدد مدة المشروع.',ex:'حددت المسار الحرج وخفّضت المدة 3 أسابيع.'},
+  ],
+  tactical:[
+    {term:'Change Control Board',ar:'لجنة التحكم بالتغيير',def:'لجنة تراجع وتوافق على التغييرات.',ex:'أسّستها وخفّضت التغييرات غير المعتمدة 60%.'},
+    {term:'Risk Mitigation',ar:'تخفيف المخاطر',def:'إجراءات استباقية لتقليل أثر المخاطر.',ex:'بنيت سجل مخاطر شهري لكل مشروع كبير.'},
+    {term:'Earned Value Management',ar:'إدارة القيمة المكتسبة',def:'منهجية تقيس الأداء بدمج النطاق والجدول والتكلفة.',ex:'استخدمت EVM لإعادة جدولة مشروع CPI أقل من 0.8.'},
+    {term:'Stakeholder Engagement',ar:'إشراك أصحاب المصلحة',def:'إدارة منهجية لتوقعات أصحاب المصلحة.',ex:'صنّفتهم Power/Interest Matrix.'},
+  ],
+  executive:[
+    {term:'PMO Governance',ar:'حوكمة مكتب المشاريع',def:'إطار يضبط سياسات واتخاذ القرار.',ex:'صممت نموذج ثلاثي: تشغيلي / تكتيكي / استراتيجي.'},
+    {term:'Portfolio Optimization',ar:'تحسين المحفظة',def:'اختيار وتوازن المشاريع لتحقيق أهداف المنظمة.',ex:'أعدت توزيع 50 مشروع على 3 برامج استراتيجية.'},
+    {term:'Agile vs Waterfall',ar:'رشيق مقابل تقليدي',def:'Waterfall للنطاق الثابت، Agile للمتغير.',ex:'طبّقت Hybrid في مشاريع التحول الرقمي.'},
+    {term:'Benefits Realization',ar:'تحقيق المنافع',def:'التحقق من تحقيق العوائد المخطط لها بعد التسليم.',ex:'تتبّعت KPIs بعد 6 أشهر من إطلاق المشاريع.'},
+  ]
+};
+const CRISES=['اكتشفت في صباح يوم العرض النهائي أن مقاول رئيسي أفلس. المشروع يُسلّم بعد 72 ساعة. ماذا تفعل؟','وزير يطلب إضافة 3 مخرجات جديدة دون تمديد الجدول أو الميزانية. كيف تتعامل؟','فريقك الأساسي من 5 أشخاص استقال دفعة واحدة في منتصف مشروع حرج. ما خطتك؟','اكتشفت خللاً أمنياً في النظام الذي سلّمته الأسبوع الماضي. ماذا تفعل خلال أول ساعة؟','ميزانية مشروعك خُفِّضت 40% مع إلزامك بنفس النطاق والموعد. كيف تتصرف؟'];
+const MEMORY_DATA=[
+  {facts:['الميزانية: 12 مليون ريال','المدة: 18 شهراً','المخاطر العالية: 7 مخاطر'],q:'كم عدد المخاطر العالية؟',a:'7'},
+  {facts:['الفريق: 23 شخص','نسبة الإنجاز: 67%','الحالة: متأخر 3 أسابيع'],q:'كم نسبة الإنجاز الحالية؟',a:'67%'},
+  {facts:['العميل: وزارة الصحة','CPI: 0.87','SPI: 0.93'],q:'ما هي قيمة CPI للمشروع؟',a:'0.87'},
+];
+let state={mastered:{},gymScore:0,memoryScore:0,memoryTotal:0};
+let activityLog=[],lastReport=null,currentLevel='operational',geminiCache={};
+let boardroomHistory=[],boardroomLang='ar',recognition=null,isListening=false,currentTranscript='';
+let memoryState={},challengeState={active:false,timer:null,seconds:60,scenario:''};
+function loadState(){try{const s=localStorage.getItem(SK);if(s)state={...state,...JSON.parse(s)};const l=localStorage.getItem(SK_LOG);if(l)activityLog=JSON.parse(l);const r=localStorage.getItem(SK_REPORT);if(r)lastReport=JSON.parse(r);}catch(e){}}
+function saveState(){try{localStorage.setItem(SK,JSON.stringify(state));}catch(e){}}
+function saveLog(){try{localStorage.setItem(SK_LOG,JSON.stringify(activityLog.slice(-100)));}catch(e){}}
+function logActivity(text,icon='📌'){activityLog.unshift({text,icon,time:new Date().toLocaleString('ar-SA',{hour:'2-digit',minute:'2-digit',day:'numeric',month:'short'})});saveLog();updateHomeStats();}
+function getApiKey(){return localStorage.getItem(SK_API)||'AIzaSyDPk6gcUqOfymtW2yypWKMxA3UV1I0y6Dc';}
+function saveApiKey(){const k=document.getElementById('api-key-input').value.trim();if(!k){showToast('أدخل المفتاح');return;}localStorage.setItem(SK_API,k);document.getElementById('api-key-status').textContent='✅ تم الحفظ';showToast('✅ تم حفظ المفتاح');}
+async function callGemini(prompt,sys=''){const key=getApiKey();const url=`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${key}`;const msgs=[];if(sys)msgs.push({role:'user',parts:[{text:'[SYSTEM]: '+sys}]},{role:'model',parts:[{text:'فهمت.'}]});msgs.push({role:'user',parts:[{text:prompt}]});const res=await fetch(url,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({contents:msgs})});if(!res.ok)throw new Error('API '+res.status);const d=await res.json();return d.candidates?.[0]?.content?.parts?.[0]?.text||'';}
+async function callGeminiChat(msgs){const key=getApiKey();const url=`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${key}`;const res=await fetch(url,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({contents:msgs})});if(!res.ok)throw new Error('API');const d=await res.json();return d.candidates?.[0]?.content?.parts?.[0]?.text||'';}
+function switchNav(id){document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));document.getElementById('nav-'+id)?.classList.add('active');document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById('screen-'+id)?.classList.add('active');if(id==='settings'){document.getElementById('api-key-input').value=localStorage.getItem(SK_API)||'';}window.scrollTo(0,0);}
+function setMood(c){['green','yellow','red'].forEach(x=>document.getElementById('mood-'+x).classList.remove('green','yellow','red'));document.getElementById('mood-'+c).classList.add(c);localStorage.setItem(SK_MOOD,c);const l={green:'جاهز للتحدي',yellow:'متعب لكن مستمر',red:'مرهق'};logActivity('الحالة الذهنية: '+l[c],c==='green'?'🟢':c==='yellow'?'🟡':'🔴');showToast('تم التسجيل');}
+function updateHomeStats(){const t=Object.values(state.mastered).filter(Boolean).length;setText('stat-terms',t);setText('stat-gym',state.gymScore||0);setText('stat-log',activityLog.length);setText('total-activities',activityLog.length+' نشاط');const pct=Math.round(Math.min((t/12+(state.gymScore||0)/5)/2,1)*100);setBar('total-bar','total-pct',pct);renderHomeLog();}
+function renderHomeLog(){const el=document.getElementById('home-log');if(!activityLog.length){el.innerHTML='<div class="empty-state"><div class="empty-icon">🌱</div>لا أنشطة بعد</div>';return;}el.innerHTML=activityLog.slice(0,5).map(l=>`<div class="log-item"><div class="log-dot"></div><div class="log-text">${l.icon} ${l.text}</div><div class="log-time">${l.time}</div></div>`).join('');}
+function setLevel(l){currentLevel=l;document.querySelectorAll('.level-tab').forEach(t=>t.classList.remove('active'));document.getElementById('tab-'+l.substring(0,3)).classList.add('active');renderLexicon();}
+function renderLexicon(){const terms=TERMS[currentLevel];const base=currentLevel==='operational'?0:currentLevel==='tactical'?4:8;document.getElementById('flashcard-list').innerHTML=terms.map((t,i)=>{const idx=base+i;const m=state.mastered[idx];return`<div class="flashcard ${m?'flipped':''}" id="fc-${idx}"><div class="fc-front" onclick="flipCard(${idx})"><div class="fc-term">${t.term}</div><div class="fc-term-ar">${t.ar}</div><div class="fc-hint">انقر للتعريف ←</div></div><div class="fc-back"><div class="fc-def">${t.def}</div><div class="fc-example"><div class="fc-ex-label">مثال:</div>${t.ex}</div><button class="btn btn-blue btn-sm" onclick="explainWithGemini(${idx},'${t.term}')" id="explain-btn-${idx}" style="margin-bottom:8px;">✨ شرح Gemini</button><div class="gemini-result" id="gemini-${idx}"><div class="gemini-label">🤖 Gemini يشرح</div><div class="gemini-text" id="gemini-text-${idx}"></div></div><button class="mastered-btn ${m?'done':''}" onclick="toggleMastered(${idx})">${m?'✓ أتقنت':'أتقنت هذا المصطلح'}</button></div></div>`;}).join('');}
+function flipCard(i){document.getElementById('fc-'+i)?.classList.toggle('flipped');}
+async function explainWithGemini(idx,term){const btn=document.getElementById('explain-btn-'+idx);const res=document.getElementById('gemini-'+idx);const txt=document.getElementById('gemini-text-'+idx);if(geminiCache[term]){txt.textContent=geminiCache[term];res.classList.add('visible');return;}btn.innerHTML='<span class="spinner"></span>';btn.disabled=true;try{const t=await callGemini(`اشرح "${term}" بأسلوب عملي لمدير PMO في مقابلة C-suite. 1) تعريف دقيق 2) تطبيق في وزارة حكومية سعودية 3) جملة للمقابلة. بالعربية مختصراً.`);geminiCache[term]=t;txt.textContent=t;res.classList.add('visible');logActivity('شرح Gemini: '+term,'✨');btn.innerHTML='✨ شرح Gemini';btn.disabled=false;}catch(e){btn.innerHTML='✨ شرح Gemini';btn.disabled=false;showToast('❌ خطأ');}}
+function toggleMastered(idx){state.mastered[idx]=!state.mastered[idx];saveState();updateHomeStats();renderLexicon();if(state.mastered[idx]){const all=[...TERMS.operational,...TERMS.tactical,...TERMS.executive];logActivity('إتقان: '+all[idx]?.term,'🧠');showToast('🧠 ممتاز!');}}
+function startChallenge(){const s=CRISES[Math.floor(Math.random()*CRISES.length)];challengeState={active:true,seconds:60,scenario:s,timer:null};const area=document.getElementById('challenge-area');area.innerHTML=`<div class="timer-ring"><svg width="80" height="80" viewBox="0 0 80 80"><circle class="bg" cx="40" cy="40" r="35"/><circle class="fg" id="timer-circle" cx="40" cy="40" r="35" stroke-dasharray="219.9" stroke-dashoffset="0"/></svg><div class="timer-num" id="timer-num">60</div></div><div style="background:var(--navy3);border-radius:12px;padding:12px;margin-bottom:10px;font-size:13px;line-height:1.7;border:1px solid rgba(201,168,76,0.15);">🚨 ${s}</div><textarea id="challenge-answer" placeholder="اكتب قرارك..." rows="4"></textarea><button class="btn btn-gold" style="margin-top:8px;" onclick="submitChallenge()">إرسال للتقييم ✨</button>`;const circ=document.getElementById('timer-circle');const full=219.9;challengeState.timer=setInterval(()=>{challengeState.seconds--;setText('timer-num',challengeState.seconds);circ.style.strokeDashoffset=full*(1-challengeState.seconds/60);if(challengeState.seconds<=0){clearInterval(challengeState.timer);submitChallenge();}},1000);}
+async function submitChallenge(){clearInterval(challengeState.timer);const ans=document.getElementById('challenge-answer')?.value.trim();if(!ans){showToast('اكتب إجابتك');return;}const area=document.getElementById('challenge-area');area.innerHTML=`<div style="text-align:center;padding:16px;"><span class="spinner spinner-gold"></span><div style="color:var(--text2);font-size:12px;margin-top:8px;">Gemini يقيّم...</div></div>`;try{const fb=await callGemini(`أنت مدير تنفيذي صارم. قيّم:\nالأزمة: ${challengeState.scenario}\nالقرار: ${ans}\n1) نقاط القوة 2) ثغرات خطيرة 3) ما يجب فعله أولاً 4) تقييم من 10. بحزم وبالعربية.`);state.gymScore=(state.gymScore||0)+1;saveState();updateHomeStats();logActivity('أكمل تحدي الـ 60 ثانية','⚡');setText('gym-score-badge',state.gymScore+' تحدي');area.innerHTML=`<div class="report-card" style="margin-bottom:10px;"><div class="report-section-title">🤖 تقييم Gemini</div><div class="report-text">${fb}</div></div><button class="btn btn-gold" onclick="startChallenge()">تحدي جديد ←</button>`;}catch(e){area.innerHTML=`<div style="color:var(--red);text-align:center;padding:12px;">❌ خطأ في الاتصال</div><button class="btn btn-navy" onclick="startChallenge()" style="margin-top:8px;">حاول مجدداً</button>`;}}
+function startMemory(){const idx=Math.floor(Math.random()*MEMORY_DATA.length);const data=MEMORY_DATA[idx];memoryState={idx,data,timer:null};const area=document.getElementById('memory-area');area.innerHTML=`<div style="text-align:center;color:var(--text2);font-size:12px;margin-bottom:8px;">احفظ — تختفي بعد 5 ثوانٍ</div><div class="memory-card-grid">${data.facts.map(f=>`<div class="mem-card">${f}</div>`).join('')}</div><div style="text-align:center;"><span id="mem-countdown" style="font-size:28px;font-weight:700;color:var(--purple);">5</span></div>`;let c=5;memoryState.timer=setInterval(()=>{c--;setText('mem-countdown',c);if(c<=0){clearInterval(memoryState.timer);showMemoryQuestion(data);}},1000);}
+function showMemoryQuestion(data){document.getElementById('memory-area').innerHTML=`<div style="background:var(--navy3);border-radius:12px;padding:14px;margin-bottom:10px;font-size:14px;font-weight:600;">${data.q}</div><input type="text" id="mem-answer" placeholder="إجابتك..." style="margin-bottom:8px;"><button class="btn btn-purple" onclick="checkMemory('${data.a}')">تحقق</button>`;}
+function checkMemory(correct){const ans=document.getElementById('mem-answer')?.value.trim().toLowerCase();const ok=ans.includes(correct.toLowerCase())||correct.toLowerCase().includes(ans);state.memoryScore=(state.memoryScore||0)+(ok?1:0);state.memoryTotal=(state.memoryTotal||0)+1;saveState();setText('memory-score',`${state.memoryScore}/${state.memoryTotal}`);document.getElementById('memory-area').innerHTML=`<div style="text-align:center;padding:16px;"><div style="font-size:40px;margin-bottom:8px;">${ok?'✅':'❌'}</div><div style="font-size:14px;font-weight:600;color:${ok?'var(--green)':'var(--red)'};">${ok?'إجابة صحيحة!':'الإجابة: '+correct}</div></div><button class="btn btn-purple" onclick="startMemory()" style="margin-top:8px;">جولة جديدة ←</button>`;if(ok)logActivity('اجتاز تمرين الذاكرة','🧩');}
+function initBoardroom(){const area=document.getElementById('chat-area');if(!area.children.length)area.innerHTML='<div class="chat-msg system">اضغط "بدء جلسة جديدة" للبدء</div>';}
+function setBoardroomLang(lang){boardroomLang=lang;document.getElementById('br-ar').style.opacity=lang==='ar'?'1':'0.5';document.getElementById('br-en').style.opacity=lang==='en'?'1':'0.5';}
+async function startBoardroomSession(){boardroomHistory=[];const area=document.getElementById('chat-area');area.innerHTML='';const sys=boardroomLang==='en'?'You are a tough executive interviewer. Ask one challenging question to a PMO Director candidate. English only.':'أنت محاور تنفيذي صارم. اسأل مدير PMO سؤالاً واحداً صعباً. عربية فقط.';appendChat('system',boardroomLang==='en'?'Session started':'الجلسة بدأت');const lid=appendChat('ai','<span class="spinner"></span>');try{const q=await callGemini('ابدأ بسؤال واحد صعب.',sys);boardroomHistory.push({role:'user',parts:[{text:'ابدأ'}]},{role:'model',parts:[{text:q}]});updateChatMsg(lid,q);speakText(q);}catch(e){updateChatMsg(lid,'❌ خطأ');}}
+function appendChat(type,text){const area=document.getElementById('chat-area');const id='msg-'+Date.now();const div=document.createElement('div');div.className='chat-msg '+type;div.id=id;div.innerHTML=text;area.appendChild(div);area.scrollTop=area.scrollHeight;return id;}
+function updateChatMsg(id,text){const el=document.getElementById(id);if(el)el.innerHTML=text;document.getElementById('chat-area').scrollTop=99999;}
+function toggleMic(){if(isListening){stopMic();return;}startMic();}
+function startMic(){const SR=window.SpeechRecognition||window.webkitSpeechRecognition;if(!SR){showToast('المتصفح لا يدعم الصوت');return;}recognition=new SR();recognition.lang=boardroomLang==='en'?'en-US':'ar-SA';recognition.continuous=false;recognition.interimResults=true;recognition.onstart=()=>{isListening=true;setMicState('listening');};recognition.onresult=(e)=>{let t='';for(let i=e.resultIndex;i<e.results.length;i++)t+=e.results[i][0].transcript;currentTranscript=t;document.getElementById('transcript-preview').textContent=t;document.getElementById('send-voice-btn').style.display=t?'flex':'none';};recognition.onend=()=>{isListening=false;setMicState('idle');};recognition.onerror=()=>{isListening=false;setMicState('idle');showToast('خطأ في المايكروفون');};recognition.start();}
+function stopMic(){recognition?.stop();isListening=false;setMicState('idle');}
+function setMicState(s){const btn=document.getElementById('mic-btn');btn.className='mic-btn '+s;btn.textContent=s==='listening'?'⏹':s==='processing'?'⏳':'🎤';}
+async function sendTranscript(){if(!currentTranscript.trim())return;const text=currentTranscript;currentTranscript='';document.getElementById('transcript-preview').textContent='';document.getElementById('send-voice-btn').style.display='none';appendChat('user',text);boardroomHistory.push({role:'user',parts:[{text}]});setMicState('processing');const lid=appendChat('ai','<span class="spinner"></span>');try{const reply=await callGeminiChat(boardroomHistory);boardroomHistory.push({role:'model',parts:[{text:reply}]});updateChatMsg(lid,reply);speakText(reply);logActivity('محادثة مقابلة تنفيذية','🎤');}catch(e){updateChatMsg(lid,'❌ خطأ');}setMicState('idle');}
+function speakText(t){if(!window.speechSynthesis)return;window.speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(t);u.lang=boardroomLang==='en'?'en-US':'ar-SA';u.rate=0.9;window.speechSynthesis.speak(u);}
+function clearBoardroom(){boardroomHistory=[];document.getElementById('chat-area').innerHTML='<div class="chat-msg system">تم المسح</div>';window.speechSynthesis?.cancel();}
+function renderAnalytics(){const el=document.getElementById('full-log');if(!activityLog.length){el.innerHTML='<div class="empty-state"><div class="empty-icon">📊</div>لا أنشطة بعد</div>';}else{el.innerHTML=activityLog.slice(0,20).map(l=>`<div class="log-item"><div class="log-dot"></div><div class="log-text">${l.icon} ${l.text}</div><div class="log-time">${l.time}</div></div>`).join('');}if(lastReport)renderReport(lastReport);}
+async function generateReport(){if(!activityLog.length){showToast('لا يوجد نشاط بعد');return;}const btn=document.getElementById('report-btn');btn.innerHTML='<span class="spinner spinner-gold"></span> Gemini يحلل...';btn.disabled=true;try{const log=activityLog.slice(0,30).map(l=>`${l.time}: ${l.text}`).join('\n');const text=await callGemini(`أنت مستشار تنفيذي. حلّل نشاط هذا المدير:\n${log}\n\n1. نقاط القوة 2. نقاط الضعف 3. مستوى النضج القيادي 4. جرعة تحفيزية صارمة 5. الخطوة التالية. بالعربية مباشرة.`);lastReport={text,date:new Date().toLocaleString('ar-SA')};localStorage.setItem(SK_REPORT,JSON.stringify(lastReport));renderReport(lastReport);logActivity('استخرج تقرير أداء شامل','📊');}catch(e){showToast('❌ خطأ في الاتصال');}btn.innerHTML='📊 استخراج تقرير الأداء الشامل';btn.disabled=false;}
+function renderReport(r){const titles=['💪 نقاط القوة','⚠️ نقاط الضعف','📈 مستوى النضج','🔥 الجرعة التحفيزية','🎯 الخطوة التالية'];const sections=r.text.split(/\d+\.\s+/).filter(Boolean);document.getElementById('report-area').innerHTML=`<div style="font-size:10px;color:var(--text3);margin-bottom:8px;">${r.date}</div>${sections.map((s,i)=>`<div class="report-card"><div class="report-section-title">${titles[i]||'📌'}</div><div class="report-text">${s.trim()}</div></div>`).join('')}`;}
+function resetAll(){if(!confirm('مسح كل البيانات؟'))return;state={mastered:{},gymScore:0,memoryScore:0,memoryTotal:0};activityLog=[];lastReport=null;saveState();saveLog();localStorage.removeItem(SK_REPORT);updateHomeStats();showToast('🔄 تم الضبط');}
+function setBar(b,p,v){const be=document.getElementById(b);const pe=document.getElementById(p);if(be)be.style.width=v+'%';if(pe)pe.textContent=v+'%';}
+function setText(id,val){const e=document.getElementById(id);if(e)e.textContent=val;}
 function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2500);}
-loadState();updateUI();
-if(state.savedQuestions?.length){document.getElementById('questions-area').innerHTML=state.savedQuestions.map((q,i)=>`<div class="ai-question-card"><div class="ai-q-label">سؤال ${i+1}</div><div class="ai-q-text">${q.q}</div><div class="ai-q-type">${q.type}</div></div>`).join('');}
+loadState();
+document.getElementById('home-date').textContent=new Date().toLocaleDateString('ar-SA',{weekday:'long',day:'numeric',month:'long'});
+updateHomeStats();
+const m=localStorage.getItem(SK_MOOD);if(m)document.getElementById('mood-'+m)?.classList.add(m);
+setText('memory-score',`${state.memoryScore||0}/${state.memoryTotal||0}`);
+setText('gym-score-badge',(state.gymScore||0)+' تحدي');
+if(lastReport)setTimeout(()=>{if(document.getElementById('screen-analytics').classList.contains('active'))renderReport(lastReport);},100);
 </script>
 </body>
 </html>
