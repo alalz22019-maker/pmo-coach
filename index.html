@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="PMO Coach">
+<title>Executive PMO Coach</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --navy: #0a0e1a; --navy2: #111827; --navy3: #1a2236; --navy4: #243047;
+  --gold: #c9a84c; --gold2: #e8c96a; --gold-dim: rgba(201,168,76,0.15);
+  --green: #22c55e; --green-dim: rgba(34,197,94,0.12);
+  --blue: #3b82f6; --blue-dim: rgba(59,130,246,0.12);
+  --red: #ef4444; --text: #f1f5f9; --text2: #94a3b8; --text3: #475569;
+  --border: rgba(255,255,255,0.06); --border2: rgba(255,255,255,0.1);
+  --r: 16px; --safe-top: env(safe-area-inset-top,44px); --safe-bottom: env(safe-area-inset-bottom,34px);
+}
+* { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+body { font-family:'IBM Plex Sans Arabic',sans-serif; background:var(--navy); color:var(--text); min-height:100dvh; }
+.safe-top { height:var(--safe-top); } .safe-bottom { height:calc(var(--safe-bottom) + 70px); }
+.screen { display:none; animation:fadeIn 0.3s ease; } .screen.active { display:block; }
+@keyframes fadeIn { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:none} }
+.bottom-nav { position:fixed; bottom:0; left:0; right:0; height:calc(var(--safe-bottom) + 70px); background:rgba(10,14,26,0.95); backdrop-filter:blur(20px); border-top:1px solid var(--border2); display:flex; align-items:flex-start; padding-top:10px; z-index:100; }
+.nav-item { flex:1; display:flex; flex-direction:column; align-items:center; gap:4px; cursor:pointer; padding:4px 0; }
+.nav-icon { font-size:22px; transition:transform 0.2s; } .nav-label { font-size:10px; color:var(--text3); }
+.nav-item.active .nav-icon { transform:scale(1.15); } .nav-item.active .nav-label { color:var(--gold); }
+.header { padding:16px 20px 12px; position:sticky; top:var(--safe-top); z-index:50; background:rgba(10,14,26,0.9); backdrop-filter:blur(20px); }
+.header-title { font-size:22px; font-weight:700; } .header-sub { font-size:13px; color:var(--text2); margin-top:2px; }
+.content { padding:0 16px 16px; }
+.progress-wrap { margin:8px 0 4px; } .progress-label { display:flex; justify-content:space-between; font-size:12px; color:var(--text2); margin-bottom:6px; }
+.progress-track { background:var(--navy4); border-radius:99px; height:6px; overflow:hidden; }
+.progress-fill { height:100%; border-radius:99px; background:linear-gradient(90deg,var(--gold),var(--gold2)); transition:width 0.6s cubic-bezier(.34,1.56,.64,1); }
+.card { background:var(--navy2); border:1px solid var(--border); border-radius:var(--r); padding:16px; margin-bottom:12px; }
+.card-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:10px; }
+.card-icon { font-size:24px; } .card-badge { font-size:11px; font-weight:600; padding:3px 10px; border-radius:99px; background:var(--gold-dim); color:var(--gold); }
+.card-badge.done { background:var(--green-dim); color:var(--green); }
+.card-title { font-size:16px; font-weight:600; margin-bottom:4px; } .card-sub { font-size:13px; color:var(--text2); }
+.card-btn { width:100%; margin-top:14px; padding:12px; border-radius:12px; border:none; cursor:pointer; font-family:'IBM Plex Sans Arabic',sans-serif; font-size:14px; font-weight:600; transition:all 0.2s; }
+.card-btn.primary { background:var(--gold); color:var(--navy); } .card-btn.secondary { background:var(--navy3); color:var(--text); border:1px solid var(--border2); }
+.welcome-banner { background:linear-gradient(135deg,var(--navy3),var(--navy4)); border:1px solid rgba(201,168,76,0.2); border-radius:var(--r); padding:20px; margin:12px 16px; position:relative; overflow:hidden; }
+.welcome-title { font-size:18px; font-weight:700; color:var(--gold); margin-bottom:6px; } .welcome-sub { font-size:13px; color:var(--text2); line-height:1.6; }
+.stats-row { display:flex; gap:10px; padding:0 16px 4px; }
+.stat-box { flex:1; background:var(--navy2); border:1px solid var(--border); border-radius:14px; padding:12px; text-align:center; }
+.stat-num { font-size:22px; font-weight:700; color:var(--gold); } .stat-lbl { font-size:11px; color:var(--text2); margin-top:2px; }
+.phase-header { background:linear-gradient(135deg,var(--navy3),var(--navy4)); border-bottom:1px solid var(--border2); padding:16px 16px 20px; }
+.back-btn { display:inline-flex; align-items:center; gap:6px; font-size:13px; color:var(--gold); cursor:pointer; margin-bottom:12px; background:none; border:none; font-family:'IBM Plex Sans Arabic',sans-serif; }
+.phase-emoji { font-size:32px; margin-bottom:8px; } .phase-title { font-size:20px; font-weight:700; } .phase-desc { font-size:13px; color:var(--text2); margin-top:4px; }
+.task-item { background:var(--navy2); border:1px solid var(--border); border-radius:var(--r); padding:14px 16px; margin-bottom:10px; cursor:pointer; display:flex; align-items:center; gap:12px; transition:all 0.2s; }
+.task-item.done { border-color:rgba(34,197,94,0.25); background:rgba(34,197,94,0.04); }
+.task-check { width:26px; height:26px; border-radius:50%; border:2px solid var(--border2); flex-shrink:0; display:flex; align-items:center; justify-content:center; font-size:13px; }
+.task-item.done .task-check { background:var(--green); border-color:var(--green); }
+.task-name { font-size:14px; font-weight:500; } .task-meta { font-size:12px; color:var(--text2); margin-top:2px; }
+.modal-overlay { position:fixed; inset:0; z-index:200; background:rgba(0,0,0,0.7); backdrop-filter:blur(8px); display:none; align-items:flex-end; }
+.modal-overlay.open { display:flex; }
+.modal { background:var(--navy2); border-radius:24px 24px 0 0; width:100%; max-height:90dvh; overflow-y:auto; padding:20px 20px calc(var(--safe-bottom) + 20px); border-top:1px solid var(--border2); animation:slideUp 0.35s cubic-bezier(.34,1.56,.64,1); }
+@keyframes slideUp { from{transform:translateY(100%)} to{transform:none} }
+.modal-handle { width:40px; height:4px; background:var(--border2); border-radius:99px; margin:0 auto 16px; }
+.modal-title { font-size:17px; font-weight:700; margin-bottom:16px; }
+.field-group { margin-bottom:14px; } .field-label { font-size:12px; font-weight:600; color:var(--gold); letter-spacing:0.5px; margin-bottom:6px; display:block; }
+.field-desc { font-size:11px; color:var(--text3); margin-bottom:6px; }
+textarea { width:100%; background:var(--navy3); border:1px solid var(--border2); border-radius:12px; padding:12px; color:var(--text); font-family:'IBM Plex Sans Arabic',sans-serif; font-size:14px; resize:none; outline:none; min-height:80px; }
+textarea:focus { border-color:rgba(201,168,76,0.4); }
+.ai-feedback { background:linear-gradient(135deg,rgba(59,130,246,0.08),rgba(201,168,76,0.05)); border:1px solid rgba(59,130,246,0.2); border-radius:14px; padding:14px; margin-top:12px; display:none; }
+.ai-feedback.visible { display:block; animation:fadeIn 0.4s ease; }
+.ai-label { font-size:11px; font-weight:700; color:var(--blue); letter-spacing:0.5px; }
+.ai-text { font-size:13px; color:var(--text2); line-height:1.7; margin-top:8px; }
+.ai-score { display:inline-flex; align-items:center; gap:4px; background:var(--gold-dim); color:var(--gold); font-size:12px; font-weight:700; padding:3px 10px; border-radius:99px; margin-top:8px; }
+.flashcard { background:var(--navy2); border:1px solid var(--border); border-radius:var(--r); padding:20px; cursor:pointer; margin-bottom:6px; min-height:140px; }
+.flashcard.flipped { border-color:rgba(201,168,76,0.25); background:rgba(201,168,76,0.04); }
+.fc-back { display:none; } .flashcard.flipped .fc-front { display:none; } .flashcard.flipped .fc-back { display:block; animation:fadeIn 0.3s ease; }
+.fc-term { font-size:20px; font-weight:700; color:var(--gold); margin-bottom:6px; } .fc-hint { font-size:12px; color:var(--text3); }
+.fc-def { font-size:14px; line-height:1.7; margin-bottom:10px; } .fc-example { font-size:12px; color:var(--text2); background:var(--navy3); border-radius:10px; padding:10px; }
+.fc-example-label { font-size:11px; color:var(--gold); font-weight:600; margin-bottom:4px; }
+.mastered-btn { width:100%; margin-top:10px; padding:10px; border-radius:12px; border:none; cursor:pointer; font-family:'IBM Plex Sans Arabic',sans-serif; font-size:13px; font-weight:600; background:var(--green-dim); color:var(--green); border:1px solid rgba(34,197,94,0.2); }
+.mastered-btn.done { background:var(--green); color:#000; }
+.check-item { display:flex; align-items:flex-start; gap:12px; background:var(--navy2); border:1px solid var(--border); border-radius:var(--r); padding:14px 16px; margin-bottom:10px; cursor:pointer; }
+.check-item.done { border-color:rgba(34,197,94,0.25); background:rgba(34,197,94,0.04); }
+.check-box { width:22px; height:22px; flex-shrink:0; margin-top:1px; border-radius:6px; border:2px solid var(--border2); display:flex; align-items:center; justify-content:center; font-size:12px; }
+.check-item.done .check-box { background:var(--green); border-color:var(--green); }
+.check-text { font-size:14px; line-height:1.6; } .check-item.done .check-text { color:var(--text2); text-decoration:line-through; }
+.ai-question-card { background:linear-gradient(135deg,var(--navy3),var(--navy4)); border:1px solid rgba(59,130,246,0.2); border-radius:var(--r); padding:18px; margin-bottom:14px; }
+.ai-q-label { font-size:11px; color:var(--blue); font-weight:700; margin-bottom:8px; letter-spacing:0.5px; }
+.ai-q-text { font-size:15px; font-weight:600; line-height:1.6; } .ai-q-type { font-size:11px; color:var(--text3); margin-top:6px; }
+.setting-item { display:flex; align-items:center; justify-content:space-between; background:var(--navy2); border:1px solid var(--border); border-radius:var(--r); padding:16px; margin-bottom:10px; }
+.danger-btn { padding:10px 18px; border-radius:12px; border:none; cursor:pointer; font-family:'IBM Plex Sans Arabic',sans-serif; font-size:13px; font-weight:600; background:rgba(239,68,68,0.12); color:var(--red); border:1px solid rgba(239,68,68,0.2); }
+.spinner { width:20px; height:20px; border-radius:50%; border:2px solid rgba(59,130,246,0.2); border-top-color:var(--blue); animation:spin 0.7s linear infinite; display:inline-block; }
+@keyframes spin { to{transform:rotate(360deg)} }
+.section-label { font-size:11px; font-weight:700; letter-spacing:1px; color:var(--text3); text-transform:uppercase; padding:16px 16px 8px; }
+.toast { position:fixed; top:calc(var(--safe-top) + 12px); left:50%; transform:translateX(-50%); background:var(--green); color:#000; font-weight:600; font-size:13px; padding:10px 20px; border-radius:99px; z-index:500; opacity:0; pointer-events:none; transition:opacity 0.3s; white-space:nowrap; }
+.toast.show { opacity:1; }
+</style>
+</head>
+<body>
+<div class="safe-top"></div>
+<div id="screen-home" class="screen active">
+  <div class="header"><div class="header-title">Executive PMO Coach</div><div class="header-sub">خطة تدريبية مكثفة للمقابلات التنفيذية</div></div>
+  <div class="welcome-banner"><div class="welcome-title">مرحباً، علي 👋</div><div class="welcome-sub">أنت على بُعد 3 مراحل من إتقان مقابلتك التنفيذية.</div>
+  <div class="progress-wrap" style="margin-top:16px;"><div class="progress-label"><span>التقدم الإجمالي</span><span id="total-pct">0%</span></div><div class="progress-track"><div class="progress-fill" id="total-bar" style="width:0%"></div></div></div></div>
+  <div class="stats-row"><div class="stat-box"><div class="stat-num" id="stat-stories">0</div><div class="stat-lbl">قصص STAR</div></div><div class="stat-box"><div class="stat-num" id="stat-terms">0</div><div class="stat-lbl">مصطلحات</div></div><div class="stat-box"><div class="stat-num" id="stat-checks">0</div><div class="stat-lbl">تحضيرات</div></div></div>
+  <div class="section-label">مراحل التدريب</div>
+  <div class="content">
+    <div class="card" onclick="goPhase(1)"><div class="card-header"><span class="card-icon">⭐</span><span class="card-badge" id="badge1">0/5</span></div><div class="card-title">المرحلة الأولى: العمق الفني</div><div class="card-sub">بناء 5 قصص STAR مع تحليل Gemini</div><div class="progress-wrap"><div class="progress-track"><div class="progress-fill" id="bar1" style="width:0%"></div></div></div><button class="card-btn primary" onclick="event.stopPropagation();goPhase(1)">ابدأ التدريب ←</button></div>
+    <div class="card" onclick="goPhase(2)"><div class="card-header"><span class="card-icon">🧠</span><span class="card-badge" id="badge2">0/10</span></div><div class="card-title">المرحلة الثانية: المصطلحات التقنية</div><div class="card-sub">10 مصطلحات PMO بطريقة Flashcards</div><div class="progress-wrap"><div class="progress-track"><div class="progress-fill" id="bar2" style="width:0%"></div></div></div><button class="card-btn primary" onclick="event.stopPropagation();goPhase(2)">ابدأ التدريب ←</button></div>
+    <div class="card" onclick="goPhase(3)"><div class="card-header"><span class="card-icon">🎯</span><span class="card-badge" id="badge3">0/5</span></div><div class="card-title">المرحلة الثالثة: هندسة الحوار</div><div class="card-sub">قائمة تحقق + أسئلة مقابلة بالذكاء الاصطناعي</div><div class="progress-wrap"><div class="progress-track"><div class="progress-fill" id="bar3" style="width:0%"></div></div></div><button class="card-btn primary" onclick="event.stopPropagation();goPhase(3)">ابدأ التدريب ←</button></div>
+  </div><div class="safe-bottom"></div>
+</div>
+
+<div id="screen-phase1" class="screen">
+  <div class="phase-header"><button class="back-btn" onclick="goHome()">→ الرئيسية</button><div class="phase-emoji">⭐</div><div class="phase-title">قصص STAR الذهبية الخمس</div><div class="phase-desc">اكتب قصتك واحصل على تحليل من Gemini</div>
+  <div class="progress-wrap" style="margin-top:14px;"><div class="progress-label"><span>الإنجاز</span><span id="p1-pct">0%</span></div><div class="progress-track"><div class="progress-fill" id="p1-bar" style="width:0%"></div></div></div></div>
+  <div id="star-list" class="content" style="padding-top:14px;"></div><div class="safe-bottom"></div>
+</div>
+
+<div id="screen-phase2" class="screen">
+  <div class="phase-header"><button class="back-btn" onclick="goHome()">→ الرئيسية</button><div class="phase-emoji">🧠</div><div class="phase-title">المصطلحات التقنية</div><div class="phase-desc">انقر على البطاقة لعرض التعريف</div>
+  <div class="progress-wrap" style="margin-top:14px;"><div class="progress-label"><span>الإنجاز</span><span id="p2-pct">0%</span></div><div class="progress-track"><div class="progress-fill" id="p2-bar" style="width:0%"></div></div></div></div>
+  <div id="flashcard-list" class="content" style="padding-top:14px;"></div><div class="safe-bottom"></div>
+</div>
+
+<div id="screen-phase3" class="screen">
+  <div class="phase-header"><button class="back-btn" onclick="goHome()">→ الرئيسية</button><div class="phase-emoji">🎯</div><div class="phase-title">هندسة الحوار</div><div class="phase-desc">قائمة التحقق + أسئلة بالذكاء الاصطناعي</div>
+  <div class="progress-wrap" style="margin-top:14px;"><div class="progress-label"><span>التحضيرات</span><span id="p3-pct">0%</span></div><div class="progress-track"><div class="progress-fill" id="p3-bar" style="width:0%"></div></div></div></div>
+  <div class="section-label">قائمة التحقق</div>
+  <div id="checklist" class="content" style="padding-top:0;"></div>
+  <div class="section-label">أسئلة مقابلة من Gemini</div>
+  <div class="content"><button class="card-btn primary" id="gen-q-btn" onclick="generateQuestions()" style="margin-bottom:14px;">✨ توليد أسئلة جديدة</button><div id="questions-area"></div></div>
+  <div class="safe-bottom"></div>
+</div>
+
+<div id="screen-settings" class="screen">
+  <div class="header"><div class="header-title">الإعدادات</div></div>
+  <div class="content" style="padding-top:14px;">
+    <div class="setting-item"><div><div style="font-size:14px;font-weight:500;">مفتاح Gemini API</div><div style="font-size:12px;color:var(--text2);">جاهز ✓</div></div><span style="font-size:20px;">🔑</span></div>
+    <div class="setting-item"><div><div style="font-size:14px;font-weight:500;">إجمالي التقدم</div><div style="font-size:12px;color:var(--text2);" id="progress-summary">0 من 20 مهمة</div></div><span style="font-size:20px;">📊</span></div>
+    <div class="setting-item" style="flex-direction:column;align-items:flex-start;gap:12px;"><div><div style="font-size:14px;font-weight:500;">إعادة ضبط كل شيء</div><div style="font-size:12px;color:var(--text2);">مسح جميع البيانات</div></div><button class="danger-btn" onclick="resetAll()">🗑 إعادة الضبط</button></div>
+  </div><div class="safe-bottom"></div>
+</div>
+<nav class="bottom-nav">
+  <div class="nav-item active" id="nav-home" onclick="switchNav('home')"><span class="nav-icon">🏠</span><span class="nav-label">الرئيسية</span></div>
+  <div class="nav-item" id="nav-phase1" onclick="switchNav('phase1');goPhase(1)"><span class="nav-icon">⭐</span><span class="nav-label">STAR</span></div>
+  <div class="nav-item" id="nav-phase2" onclick="switchNav('phase2');goPhase(2)"><span class="nav-icon">🧠</span><span class="nav-label">مصطلحات</span></div>
+  <div class="nav-item" id="nav-phase3" onclick="switchNav('phase3');goPhase(3)"><span class="nav-icon">🎯</span><span class="nav-label">مقابلة</span></div>
+  <div class="nav-item" id="nav-settings" onclick="switchNav('settings')"><span class="nav-icon">⚙️</span><span class="nav-label">إعدادات</span></div>
+</nav>
+
+<div class="modal-overlay" id="star-modal" onclick="if(event.target===this)closeModal()">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-title" id="modal-story-title">قصة STAR</div>
+    <div class="field-group"><label class="field-label">S — الموقف</label><div class="field-desc">صف السياق والمشكلة</div><textarea id="f-situation" rows="3" placeholder="مثال: كنت مسؤولاً عن مشروع متأخر بـ 3 أشهر..."></textarea></div>
+    <div class="field-group"><label class="field-label">T — المهمة</label><div class="field-desc">ما كانت مسؤوليتك؟</div><textarea id="f-task" rows="3" placeholder="مثال: إعادة هيكلة الخطة خلال أسبوعين..."></textarea></div>
+    <div class="field-group"><label class="field-label">A — الإجراء</label><div class="field-desc">ماذا فعلت بالتحديد؟</div><textarea id="f-action" rows="4" placeholder="أولاً: عقدت اجتماع طارئ. ثانياً: أعدت توزيع الموارد..."></textarea></div>
+    <div class="field-group"><label class="field-label">R — النتيجة</label><div class="field-desc">بالأرقام والمقاييس</div><textarea id="f-result" rows="3" placeholder="تم التسليم في الموعد مع وفر 8 مليون ريال..."></textarea></div>
+    <button class="card-btn primary" id="analyze-btn" onclick="analyzeSTAR()">✨ تحليل بـ Gemini وحفظ</button>
+    <div class="ai-feedback" id="ai-feedback"><div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;"><span style="font-size:16px;">🤖</span><span class="ai-label">تحليل Gemini</span></div><div class="ai-text" id="ai-feedback-text"></div><div class="ai-score" id="ai-score"></div></div>
+    <button class="card-btn secondary" style="margin-top:10px;" onclick="saveStory()">💾 حفظ بدون تحليل</button>
+    <button class="card-btn secondary" style="margin-top:8px;" onclick="closeModal()">إلغاء</button>
+  </div>
+</div>
+<div class="toast" id="toast"></div>
+<script>
+const GEMINI_KEY='AIzaSyDPk6gcUqOfymtW2yypWKMxA3UV1I0y6Dc';
+const GEMINI_URL=`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${GEMINI_KEY}`;
+const STAR_STORIES=[{id:'s1',title:'إنقاذ مشروع متعثر',desc:'مشروع تأخر أو واجه أزمة'},{id:'s2',title:'قيادة فريق متعدد الجهات',desc:'تنسيق بين أكثر من جهة'},{id:'s3',title:'إدارة تغيير استراتيجي',desc:'تحول تنظيمي أو رقمي'},{id:'s4',title:'توفير موارد أو تكاليف',desc:'مبادرة حققت وفراً ملموساً'},{id:'s5',title:'مواجهة مقاومة التغيير',desc:'إقناع جهات مترددة'}];
+const TERMS=[{term:'Scope Creep',def:'التمدد غير المخطط في نطاق المشروع دون تغيير رسمي.',ex:'تحكمت فيه بتفعيل نموذج Change Request رسمي.'},{term:'Resource Leveling',def:'توزيع الموارد بشكل متوازن لتجنب التعارض.',ex:'طبّقته حين كانت 3 مشاريع تتنافس على نفس الفريق.'},{term:'Change Control Board',def:'لجنة رسمية تراجع وتوافق على التغييرات.',ex:'أسّستها وخفّضت التغييرات غير المعتمدة 60%.'},{term:'Risk Mitigation',def:'إجراءات استباقية للتخفيف من المخاطر.',ex:'بنيت سجل مخاطر شهري لكل مشروع كبير.'},{term:'Earned Value Management',def:'منهجية EVM تقيس الأداء بدمج النطاق والجدول والتكلفة.',ex:'استخدمت CPI/SPI لإقناع القيادة بإعادة جدولة مشروع.'},{term:'Agile vs Waterfall',def:'Waterfall للنطاق الثابت، Agile للنطاق المتغير.',ex:'طبّقت Hybrid في مشاريع التحول الرقمي.'},{term:'Stakeholder Engagement',def:'إدارة منهجية لتوقعات أصحاب المصلحة.',ex:'صنّفتهم Power/Interest Matrix وصممت تواصلاً لكل فئة.'},{term:'Quality Assurance',def:'عمليات ضمان الجودة الاستباقية لمنع العيوب.',ex:'نفّذت QA gates بعد كل مرحلة تسليم.'},{term:'CPI / SPI',def:'مؤشرا الأداء: كفاءة التكلفة والجدول — القيمة أكبر من 1 جيدة.',ex:'رفعت SPI من 0.75 إلى 1.1 بخطة تعافٍ موجّهة.'},{term:'PMO Governance',def:'إطار الحوكمة الذي يضبط سياسات اتخاذ القرار.',ex:'صممت نموذج حوكمة ثلاثي: تشغيلي / تكتيكي / استراتيجي.'}];
+const CHECKLIST=[{id:'c1',text:'تحديث السيرة الذاتية قبل المقابلة بـ 24 ساعة'},{id:'c2',text:'تطبيق قاعدة الثواني الثلاث قبل أي إجابة'},{id:'c3',text:'التخلص من الكلمات الحشوية (Yeah, So, Uhm)'},{id:'c4',text:'تحضير 3 أسئلة ذكية لسؤال المحاور'},{id:'c5',text:'استخدام لغة الأرقام في كل إجابة'}];
+let state={stories:{},mastered:{},checks:{},savedQuestions:[]};
+let currentStoryId=null;
+function loadState(){try{const s=localStorage.getItem('pmo_coach_v1');if(s)state=JSON.parse(s);}catch(e){}}
+function saveState(){try{localStorage.setItem('pmo_coach_v1',JSON.stringify(state));}catch(e){}}
+function switchNav(id){document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));document.getElementById('nav-'+id)?.classList.add('active');document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById('screen-'+id)?.classList.add('active');window.scrollTo(0,0);}
+function goHome(){switchNav('home');updateUI();}
+function goPhase(n){switchNav('phase'+n);if(n===1)renderStarList();if(n===2)renderFlashcards();if(n===3)renderChecklist();updateProgress();}
+function renderStarList(){document.getElementById('star-list').innerHTML=STAR_STORIES.map(s=>{const done=state.stories[s.id]?.done;return`<div class="task-item ${done?'done':''}" onclick="openStarModal('${s.id}')"><div class="task-check">${done?'✓':''}</div><div><div class="task-name">${s.title}</div><div class="task-meta">${s.desc}</div></div></div>`;}).join('');}
+function openStarModal(id){currentStoryId=id;const story=STAR_STORIES.find(s=>s.id===id);const saved=state.stories[id]||{};document.getElementById('modal-story-title').textContent=story.title;document.getElementById('f-situation').value=saved.situation||'';document.getElementById('f-task').value=saved.task||'';document.getElementById('f-action').value=saved.action||'';document.getElementById('f-result').value=saved.result||'';const fb=document.getElementById('ai-feedback');fb.classList.remove('visible');if(saved.feedback){document.getElementById('ai-feedback-text').textContent=saved.feedback;document.getElementById('ai-score').textContent=saved.score||'';fb.classList.add('visible');}document.getElementById('analyze-btn').textContent='✨ تحليل بـ Gemini وحفظ';document.getElementById('analyze-btn').disabled=false;document.getElementById('star-modal').classList.add('open');}
+function closeModal(){document.getElementById('star-modal').classList.remove('open');}
+async function analyzeSTAR(){const btn=document.getElementById('analyze-btn');const s=document.getElementById('f-situation').value.trim();const t=document.getElementById('f-task').value.trim();const a=document.getElementById('f-action').value.trim();const r=document.getElementById('f-result').value.trim();if(!s||!t||!a||!r){showToast('أكمل جميع الحقول');return;}btn.innerHTML='<span class="spinner"></span> جارٍ التحليل...';btn.disabled=true;const prompt=`أنت خبير مقابلات تنفيذية. حلّل هذه القصة STAR:\nالموقف: ${s}\nالمهمة: ${t}\nالإجراء: ${a}\nالنتيجة: ${r}\nقدّم: نقاط القوة، نقاط التحسين، كيف تقويها، وتقييم من 10. أجب بالعربية مختصراً.`;try{const res=await fetch(GEMINI_URL,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({contents:[{parts:[{text:prompt}]}]})});const data=await res.json();const text=data.candidates?.[0]?.content?.parts?.[0]?.text||'تعذّر التحليل.';const scoreMatch=text.match(/(\d+)\s*\/\s*10/);const score=scoreMatch?`⭐ ${scoreMatch[0]}`:'';if(!state.stories[currentStoryId])state.stories[currentStoryId]={};state.stories[currentStoryId]={situation:s,task:t,action:a,result:r,done:true,feedback:text,score};saveState();updateUI();renderStarList();updateProgress();document.getElementById('ai-feedback-text').textContent=text;document.getElementById('ai-score').textContent=score;document.getElementById('ai-feedback').classList.add('visible');btn.innerHTML='✅ تم الحفظ';showToast('✅ القصة محفوظة!');}catch(e){btn.innerHTML='✨ تحليل بـ Gemini وحفظ';btn.disabled=false;showToast('خطأ في الاتصال');}}
+function saveStory(){const s=document.getElementById('f-situation').value.trim();const t=document.getElementById('f-task').value.trim();const a=document.getElementById('f-action').value.trim();const r=document.getElementById('f-result').value.trim();if(!state.stories[currentStoryId])state.stories[currentStoryId]={};Object.assign(state.stories[currentStoryId],{situation:s,task:t,action:a,result:r,done:!!(s&&t&&a&&r)});saveState();updateUI();renderStarList();updateProgress();closeModal();showToast('💾 تم الحفظ');}
+function renderFlashcards(){document.getElementById('flashcard-list').innerHTML=TERMS.map((term,i)=>{const mastered=state.mastered[i];return`<div><div class="flashcard ${mastered?'flipped':''}" id="fc-${i}" onclick="flipCard(${i})"><div class="fc-front"><div class="fc-term">${term.term}</div><div class="fc-hint">انقر للتعريف ←</div></div><div class="fc-back"><div class="fc-def">${term.def}</div><div class="fc-example"><div class="fc-example-label">مثال:</div>${term.ex}</div></div></div><button class="mastered-btn ${mastered?'done':''}" onclick="toggleMastered(${i})">${mastered?'✓ أتقنت':'أتقنت هذا المصطلح'}</button></div>`;}).join('');}
+function flipCard(i){document.getElementById('fc-'+i).classList.toggle('flipped');}
+function toggleMastered(i){state.mastered[i]=!state.mastered[i];saveState();updateUI();renderFlashcards();updateProgress();if(state.mastered[i])showToast('🧠 ممتاز!');}
+function renderChecklist(){document.getElementById('checklist').innerHTML=CHECKLIST.map(c=>{const done=state.checks[c.id];return`<div class="check-item ${done?'done':''}" onclick="toggleCheck('${c.id}')"><div class="check-box">${done?'✓':''}</div><div class="check-text">${c.text}</div></div>`;}).join('');}
+function toggleCheck(id){state.checks[id]=!state.checks[id];saveState();updateUI();renderChecklist();updateProgress();}
+async function generateQuestions(){const btn=document.getElementById('gen-q-btn');btn.innerHTML='<span class="spinner"></span> Gemini يولّد...';btn.disabled=true;const doneStories=Object.entries(state.stories).filter(([k,v])=>v.done).map(([k])=>STAR_STORIES.find(s=>s.id===k)?.title).filter(Boolean);const context=doneStories.length?`لديه قصص في: ${doneStories.join('، ')}`:'مدير PMO خبير في وزارة حكومية';const prompt=`ولّد 5 أسئلة مقابلة صعبة لمدير PMO يتقدم لدور قيادي رفيع. السياق: ${context}. أجب بـ JSON فقط: [{"q":"السؤال","type":"نوع السؤال"}]`;try{const res=await fetch(GEMINI_URL,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({contents:[{parts:[{text:prompt}]}]})});const data=await res.json();let text=data.candidates?.[0]?.content?.parts?.[0]?.text||'[]';text=text.replace(/```json|```/g,'').trim();const questions=JSON.parse(text);state.savedQuestions=questions;saveState();document.getElementById('questions-area').innerHTML=questions.map((q,i)=>`<div class="ai-question-card"><div class="ai-q-label">سؤال ${i+1}</div><div class="ai-q-text">${q.q}</div><div class="ai-q-type">${q.type}</div></div>`).join('');btn.innerHTML='✨ توليد أسئلة جديدة';btn.disabled=false;showToast('✅ تم توليد الأسئلة!');}catch(e){btn.innerHTML='✨ توليد أسئلة جديدة';btn.disabled=false;showToast('خطأ في الاتصال');}}
+function updateProgress(){const s=Object.values(state.stories).filter(x=>x.done).length;const t=Object.values(state.mastered).filter(Boolean).length;const c=Object.values(state.checks).filter(Boolean).length;const total=Math.round((s+t+c)/20*100);setBar('p1-bar','p1-pct',Math.round(s/5*100));setBar('p2-bar','p2-pct',Math.round(t/10*100));setBar('p3-bar','p3-pct',Math.round(c/5*100));setBar('total-bar','total-pct',total);document.getElementById('bar1').style.width=Math.round(s/5*100)+'%';document.getElementById('bar2').style.width=Math.round(t/10*100)+'%';document.getElementById('bar3').style.width=Math.round(c/5*100)+'%';document.getElementById('badge1').textContent=`${s}/5`;document.getElementById('badge2').textContent=`${t}/10`;document.getElementById('badge3').textContent=`${c}/5`;document.getElementById('stat-stories').textContent=s;document.getElementById('stat-terms').textContent=t;document.getElementById('stat-checks').textContent=c;document.getElementById('progress-summary').textContent=`${s+t+c} من 20 مهمة`;}
+function setBar(barId,pctId,pct){const b=document.getElementById(barId);const p=document.getElementById(pctId);if(b)b.style.width=pct+'%';if(p)p.textContent=pct+'%';}
+function updateUI(){updateProgress();}
+function resetAll(){if(!confirm('مسح كل البيانات؟'))return;state={stories:{},mastered:{},checks:{},savedQuestions:[]};saveState();updateUI();showToast('🔄 تم الضبط');}
+function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2500);}
+loadState();updateUI();
+if(state.savedQuestions?.length){document.getElementById('questions-area').innerHTML=state.savedQuestions.map((q,i)=>`<div class="ai-question-card"><div class="ai-q-label">سؤال ${i+1}</div><div class="ai-q-text">${q.q}</div><div class="ai-q-type">${q.type}</div></div>`).join('');}
+</script>
+</body>
+</html>
