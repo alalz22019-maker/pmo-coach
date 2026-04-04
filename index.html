@@ -63,7 +63,9 @@ body{font-family:'IBM Plex Sans Arabic',sans-serif;background:var(--navy);color:
 .gemini-result{background:linear-gradient(135deg,rgba(59,130,246,0.08),rgba(201,168,76,0.05));border:1px solid rgba(59,130,246,0.15);border-radius:12px;padding:12px;margin-top:10px;display:none;}
 .gemini-result.visible{display:block;animation:fadeIn 0.4s ease;}
 .gemini-label{font-size:10px;font-weight:700;color:var(--blue);letter-spacing:0.5px;margin-bottom:6px;}
-.gemini-text{font-size:12px;color:var(--text2);line-height:1.8;}
+/* حل مشكلة التنسيق والبتر */
+.gemini-text{font-size:13px;color:var(--text);line-height:1.8; word-wrap:break-word;}
+.gemini-text strong, .report-text strong, .chat-msg strong { color: var(--gold2); font-weight: 700; }
 .mastered-btn{width:100%;margin-top:8px;padding:9px;border-radius:10px;border:none;cursor:pointer;font-family:'IBM Plex Sans Arabic',sans-serif;font-size:12px;font-weight:600;background:var(--green-dim);color:var(--green);border:1px solid rgba(34,197,94,0.2);}
 .mastered-btn.done{background:var(--green);color:#000;}
 .timer-ring{width:80px;height:80px;position:relative;margin:0 auto 14px;}
@@ -72,8 +74,8 @@ body{font-family:'IBM Plex Sans Arabic',sans-serif;background:var(--navy);color:
 .timer-num{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-size:22px;font-weight:700;color:var(--gold);}
 .memory-card-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:12px 0;}
 .mem-card{background:var(--navy3);border:1px solid var(--border2);border-radius:12px;padding:12px;text-align:center;font-size:12px;line-height:1.5;}
-.chat-area{background:var(--navy3);border-radius:14px;padding:12px;margin-bottom:10px;min-height:200px;max-height:340px;overflow-y:auto;display:flex;flex-direction:column;gap:8px;}
-.chat-msg{padding:10px 12px;border-radius:12px;font-size:13px;line-height:1.6;max-width:90%;}
+.chat-area{background:var(--navy3);border-radius:14px;padding:12px;margin-bottom:10px;min-height:240px;max-height:380px;overflow-y:auto;display:flex;flex-direction:column;gap:8px;}
+.chat-msg{padding:10px 12px;border-radius:12px;font-size:13px;line-height:1.6;max-width:90%; word-wrap:break-word;}
 .chat-msg.ai{background:var(--blue-dim);border:1px solid rgba(59,130,246,0.15);align-self:flex-start;}
 .chat-msg.user{background:var(--gold-dim);border:1px solid rgba(201,168,76,0.15);align-self:flex-end;text-align:right;}
 .chat-msg.system{background:var(--navy4);color:var(--text2);font-size:11px;text-align:center;align-self:center;}
@@ -84,8 +86,8 @@ body{font-family:'IBM Plex Sans Arabic',sans-serif;background:var(--navy);color:
 .mic-btn.listening{background:var(--red-dim);border:2px solid var(--red);animation:pulse 1s infinite;}
 .mic-btn.processing{background:var(--blue-dim);border:2px solid var(--blue);}
 .report-card{background:linear-gradient(135deg,var(--navy3),var(--navy4));border:1px solid var(--border2);border-radius:var(--r);padding:16px;margin-bottom:10px;}
-.report-section-title{font-size:13px;font-weight:700;color:var(--gold);margin-bottom:8px;}
-.report-text{font-size:12px;color:var(--text2);line-height:1.8;}
+.report-section-title{font-size:14px;font-weight:700;color:var(--gold);margin-bottom:8px;}
+.report-text{font-size:13px;color:var(--text);line-height:1.8; word-wrap:break-word;}
 .log-item{display:flex;align-items:flex-start;gap:10px;padding:10px 0;border-bottom:1px solid var(--border);}
 .log-dot{width:8px;height:8px;border-radius:50%;background:var(--gold);flex-shrink:0;margin-top:4px;}
 .log-text{font-size:12px;color:var(--text2);flex:1;}.log-time{font-size:10px;color:var(--text3);}
@@ -169,7 +171,7 @@ input:focus,textarea:focus{border-color:rgba(201,168,76,0.4);}
 </div>
 
 <div id="screen-boardroom" class="screen">
-  <div class="header"><div class="header-title">غرفة الاجتماعات</div><div class="header-sub">مناقشة صوتية حية مع C-Level AI</div></div>
+  <div class="header"><div class="header-title">غرفة الاجتماعات</div><div class="header-sub">وضع المحادثة المستمرة (Live Mode)</div></div>
   <div class="content" style="padding-top:12px;">
     <div class="card" style="margin-bottom:10px;">
       <div style="display:flex;gap:8px;margin-bottom:10px;">
@@ -184,7 +186,7 @@ input:focus,textarea:focus{border-color:rgba(201,168,76,0.4);}
         <button class="btn btn-sm btn-blue" id="send-voice-btn" onclick="sendTranscript()" style="display:none;">إرسال</button>
       </div>
     </div>
-    <button class="btn btn-gold" onclick="startBoardroomSession()">🎬 بدء جلسة تفاوض جديدة</button>
+    <button class="btn btn-gold" id="start-session-btn" onclick="startBoardroomSession()">🎬 بدء جلسة تفاوض مستمرة</button>
   </div>
   <div class="safe-bottom"></div>
 </div>
@@ -255,17 +257,27 @@ let state = { mastered:{}, gymScore:0, memoryScore:0, memoryTotal:0 };
 let activityLog = [], lastReport = null, currentLevel = 'operational', geminiCache = {};
 let boardroomHistory = [], boardroomLang = 'ar', recognition = null, isListening = false, currentTranscript = '';
 let challengeState = { active:false, timer:null, seconds:60, scenario:'' };
+let isContinuousVoice = false; // التحكم في حلقة المحادثة الصوتية المستمرة
 
-// ==========================================
-// الكود المصحح: استخدام gemini-2.5-flash
-// ==========================================
+// --- دالة تنسيق الماركدوان (لتحويل النجوم إلى خط عريض) ---
+function formatAI(text) {
+  if(!text) return '';
+  return text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+             .replace(/\*(.*?)\*/g, '<em>$1</em>')
+             .replace(/\n/g, '<br>');
+}
+
+// --- محرك الذكاء الاصطناعي (مع زيادة سعة الكلمات وتحديد الموديل الصحيح) ---
 async function fetchFromGemini(prompt, apiKey, isChat = false, messages = []) {
-  const model = 'gemini-2.5-flash';
+  const model = 'gemini-2.5-flash'; // الموديل الأحدث المستقر
   const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
   
   const bodyData = {
     contents: isChat ? messages : [{ parts: [{ text: prompt }] }],
-    generationConfig: { temperature: 0.9, maxOutputTokens: 1024 },
+    generationConfig: { 
+        temperature: 0.9, 
+        maxOutputTokens: 4096 // زيادة الحد الأقصى لمنع بتر النصوص
+    },
     safetySettings: [
         { category: "HARM_CATEGORY_HARASSMENT", threshold: "BLOCK_NONE" },
         { category: "HARM_CATEGORY_HATE_SPEECH", threshold: "BLOCK_NONE" },
@@ -290,7 +302,7 @@ async function fetchFromGemini(prompt, apiKey, isChat = false, messages = []) {
     if (data.candidates && data.candidates[0].content) {
       return data.candidates[0].content.parts[0].text;
     } else {
-      throw new Error('لم يقم الذكاء الاصطناعي بإرجاع استجابة.');
+      throw new Error('لم يقم الذكاء الاصطناعي بإرجاع استجابة صالحة.');
     }
   } catch (error) {
     throw error;
@@ -333,22 +345,25 @@ function renderLexicon(){
   }).join('');
 }
 function flipCard(i){document.getElementById('fc-'+i)?.classList.toggle('flipped');}
+
 async function explainWithGemini(idx, term) {
   const key = getApiKey(); if(!key) { showToast('⚠️ يرجى تنشيط مفتاح Gemini'); return; }
   const btn = document.getElementById('explain-btn-'+idx), res = document.getElementById('gemini-'+idx), txt = document.getElementById('gemini-text-'+idx);
-  if(geminiCache[term]) { txt.innerHTML = geminiCache[term]; res.classList.add('visible'); return; }
+  if(geminiCache[term]) { txt.innerHTML = formatAI(geminiCache[term]); res.classList.add('visible'); return; }
   btn.innerHTML = '<span class="spinner"></span>'; btn.disabled = true;
   try {
-    const prompt = `اشرح مصطلح "${term}" لمدير PMO تنفيذي. أعطني: 1) المعنى العميق. 2) كيف تستخدمه لتبدو كقائد وليس كموظف تشغيلي. بالعربية مختصراً ومباشراً.`;
+    const prompt = `اشرح مصطلح "${term}" لمدير PMO تنفيذي. أعطني: 1) المعنى العميق. 2) كيف تستخدمه لتبدو كقائد وليس كموظف تشغيلي. أجب بفقرة كاملة ولا تقطع النص، بالعربية مختصراً ومباشراً.`;
     let answer = await fetchFromGemini(prompt, key);
-    answer = answer.replace(/\n/g, '<br>');
-    geminiCache[term] = answer; txt.innerHTML = answer; res.classList.add('visible');
+    geminiCache[term] = answer; 
+    txt.innerHTML = formatAI(answer); 
+    res.classList.add('visible');
     logActivity(`استشار الذكاء الاصطناعي حول: ${term}`, '✨');
   } catch(e) {
-    txt.textContent = '❌ تعذر الاتصال: ' + e.message; res.classList.add('visible');
+    txt.innerHTML = '❌ تعذر الاتصال: ' + e.message; res.classList.add('visible');
   }
   btn.innerHTML = '✨ اطلب شرح أعمق من Gemini'; btn.disabled = false;
 }
+
 function toggleMastered(idx){state.mastered[idx]=!state.mastered[idx];saveState();updateHomeStats();renderLexicon();if(state.mastered[idx]){logActivity('أتقن مصطلحاً جديداً','🧠');showToast('🧠 خطوة ممتازة نحو القيادة!');}}
 
 async function startChallenge(){
@@ -380,7 +395,7 @@ async function startChallenge(){
       </svg>
       <div class="timer-num" id="timer-num">60</div>
     </div>
-    <div style="background:var(--navy3);border-radius:12px;padding:12px;margin-bottom:10px;font-size:13px;line-height:1.7;border:1px solid rgba(201,168,76,0.15);">🚨 ${scenario}</div>
+    <div style="background:var(--navy3);border-radius:12px;padding:12px;margin-bottom:10px;font-size:13px;line-height:1.7;border:1px solid rgba(201,168,76,0.15);">🚨 ${formatAI(scenario)}</div>
     <textarea id="challenge-answer" placeholder="اكتب قرارك الحاسم هنا وبسرعة..." rows="4"></textarea>
     <button class="btn btn-gold" style="margin-top:8px;" onclick="submitChallenge()">تقديم القرار للتقييم ✨</button>
   `;
@@ -402,15 +417,14 @@ async function submitChallenge(){
   let fb = '';
   if(key) {
     try {
-      const prompt = `أنت مدير تنفيذي صارم تقيم مدير مشروع. الأزمة: ${challengeState.scenario} | قراره: ${ans} | أعطه: 1) نقاط القوة في قراره. 2) ثغرة خطيرة أغفلها. 3) تقييم من 10. بأسلوب حازم ومباشر وبالعربية.`;
+      const prompt = `أنت مدير تنفيذي صارم تقيم مدير مشروع. الأزمة: ${challengeState.scenario} | قراره: ${ans} | أعطه: 1) نقاط القوة في قراره. 2) ثغرة خطيرة أغفلها. 3) تقييم من 10. بأسلوب حازم ومباشر وبالعربية. لا تقطع الإجابة أبدًا وأكملها حتى النهاية.`;
       fb = await fetchFromGemini(prompt, key);
-      fb = fb.replace(/\n/g, '<br>');
     } catch(e) { fb = '❌ خطأ في التقييم: ' + e.message; }
   } else { fb = '⚠️ يرجى تنشيط مفتاح Gemini للحصول على التقييم المتقدم.'; }
   
   state.gymScore = (state.gymScore||0) + 1; saveState(); updateHomeStats();
   logActivity('واجه أزمة في تحدي 60 ثانية', '⚡'); setText('gym-score-badge', state.gymScore + ' تحدي');
-  area.innerHTML = `<div class="report-card" style="margin-bottom:10px;"><div class="report-section-title">🤖 تغذية راجعة تنفيذية</div><div class="report-text">${fb}</div></div><button class="btn btn-gold" onclick="startChallenge()">مواجهة أزمة جديدة ←</button>`;
+  area.innerHTML = `<div class="report-card" style="margin-bottom:10px;"><div class="report-section-title">🤖 تغذية راجعة تنفيذية</div><div class="report-text">${formatAI(fb)}</div></div><button class="btn btn-gold" onclick="startChallenge()">مواجهة أزمة جديدة ←</button>`;
 }
 
 function startMemory(){
@@ -446,9 +460,12 @@ function checkMemory(correct){
   if(ok) logActivity('أثبت قوة الذاكرة العاملة', '🧩');
 }
 
+// ==========================================
+// غرفة الاجتماعات (التحديث التفاعلي المستمر)
+// ==========================================
 function initBoardroom(){
   const area = document.getElementById('chat-area');
-  if(!area.children.length) area.innerHTML = '<div class="chat-msg system">اضغط "بدء جلسة تفاوض" لتفعيل الاتصال مع الذكاء الاصطناعي</div>';
+  if(!area.children.length) area.innerHTML = '<div class="chat-msg system">اضغط الزر بالأسفل لتفعيل الاتصال المستمر مع الذكاء الاصطناعي</div>';
 }
 function setBoardroomLang(lang){
   boardroomLang = lang;
@@ -458,28 +475,35 @@ function setBoardroomLang(lang){
 
 async function startBoardroomSession(){
   const key = getApiKey(); if(!key){ showToast('⚠️ يرجى تنشيط مفتاح Gemini أولاً'); return; }
+  
+  isContinuousVoice = true; // تفعيل وضع المحادثة المستمرة
   boardroomHistory = []; document.getElementById('chat-area').innerHTML = '';
+  document.getElementById('start-session-btn').style.display = 'none'; // إخفاء زر البدء أثناء الجلسة
   
   const topic = TOPICS_POOL[Math.floor(Math.random() * TOPICS_POOL.length)];
   const seed = Math.random().toString(36).substring(2, 10);
   const sysPrompt = boardroomLang === 'en'
-    ? `Act as a hostile C-Suite executive interviewing a PMO Director. Ask ONE extremely difficult, unique situational question about: "${topic}". Do NOT ask generic questions. Random Seed: ${seed}. Reply in English only. Keep it short.`
-    : `أنت مسؤول تنفيذي صارم تحاور مدير PMO. اسأل سؤالاً واحداً صعباً ومفاجئاً عن: "${topic}". لا تكرر الأسئلة المعتادة. Seed: ${seed}. الرد باللغة العربية فقط وبشكل مختصر.`;
+    ? `Act as a hostile C-Suite executive interviewing a PMO Director. Ask ONE extremely difficult, unique situational question about: "${topic}". Do NOT ask generic questions. Wait for my answer, then reply back aggressively and ask a follow-up. Keep all replies under 3 sentences. Random Seed: ${seed}. Reply in English only.`
+    : `أنت مسؤول تنفيذي صارم تحاور مدير PMO. اسأل سؤالاً واحداً صعباً ومفاجئاً عن: "${topic}". لا تكرر الأسئلة المعتادة. انتظر إجابتي ثم قاطعني أو اسألني سؤالاً استطرادياً. اجعل ردودك دائماً قصيرة (جملتين كحد أقصى). Seed: ${seed}. الرد باللغة العربية فقط.`;
   
-  appendChat('system', boardroomLang==='en'?'Session Initialized. AI is preparing a question...':'تم تفعيل الجلسة. يتم تحضير سؤال تنفيذي...');
+  appendChat('system', boardroomLang==='en'?'Live Session Active. AI is speaking...':'جلسة تفاعلية مستمرة. استمع للمحاور...');
   const lid = appendChat('ai', '<span class="spinner"></span>');
   
   try {
     boardroomHistory = [
       { role: 'user', parts: [{ text: sysPrompt }] },
-      { role: 'model', parts: [{ text: 'Understood. / مفهوم.' }] },
-      { role: 'user', parts: [{ text: 'Ask the question now. / اطرح السؤال الآن.' }] }
+      { role: 'model', parts: [{ text: 'مفهوم.' }] },
+      { role: 'user', parts: [{ text: 'ابدأ.' }] }
     ];
     const q = await fetchFromGemini('', key, true, boardroomHistory);
     boardroomHistory.push({ role: 'model', parts: [{ text: q }] });
-    updateChatMsg(lid, q);
-    speakText(q);
-  } catch(e) { updateChatMsg(lid, '❌ خطأ في النظام: ' + e.message, 'error'); }
+    updateChatMsg(lid, formatAI(q));
+    speakText(q, true); // إرسال true يعني: افتح المايك تلقائياً بعد الكلام
+  } catch(e) { 
+    updateChatMsg(lid, '❌ خطأ في النظام: ' + e.message, 'error'); 
+    isContinuousVoice = false;
+    document.getElementById('start-session-btn').style.display = 'block';
+  }
 }
 
 function appendChat(type,text){const area=document.getElementById('chat-area'), id='msg-'+Date.now(), div=document.createElement('div'); div.className='chat-msg '+type; div.id=id; div.innerHTML=text; area.appendChild(div); area.scrollTop=area.scrollHeight; return id;}
@@ -489,19 +513,34 @@ function toggleMic(){ if(isListening){stopMic();return;} startMic(); }
 function startMic(){
   const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
   if(!SR){ showToast('⚠️ متصفحك الحالي لا يدعم التعرف على الصوت.'); return; }
+  
   recognition = new SR();
   recognition.lang = boardroomLang === 'en' ? 'en-US' : 'ar-SA';
   recognition.continuous = false; recognition.interimResults = true;
+  
   recognition.onstart = () => { isListening = true; setMicState('listening'); };
   recognition.onresult = (e) => {
     let t = ''; for(let i=e.resultIndex; i<e.results.length; i++) t+=e.results[i][0].transcript;
     currentTranscript = t; document.getElementById('transcript-preview').textContent = t;
     document.getElementById('send-voice-btn').style.display = t ? 'flex' : 'none';
   };
-  recognition.onend = () => { isListening = false; setMicState('idle'); };
-  recognition.onerror = (e) => { isListening = false; setMicState('idle'); showToast('خطأ المايكروفون: ' + e.error); };
-  recognition.start();
+  recognition.onend = () => { 
+      isListening = false; setMicState('idle'); 
+      // إذا كان المستخدم في وضع Live وانتهى من الكلام والتسجيل، نرسل النص تلقائياً
+      if(isContinuousVoice && currentTranscript.trim().length > 0) {
+          sendTranscript();
+      }
+  };
+  recognition.onerror = (e) => { 
+      isListening = false; setMicState('idle'); 
+      if(e.error === 'not-allowed' && isContinuousVoice) {
+          showToast('نظام الجوال يمنع فتح المايك تلقائياً، الرجاء الضغط على 🎤 للتحدث.');
+      }
+  };
+  
+  try { recognition.start(); } catch(e) { console.log('Mic start error', e); }
 }
+
 function stopMic(){ if(recognition) recognition.stop(); isListening = false; setMicState('idle'); }
 function setMicState(s){ const btn = document.getElementById('mic-btn'); btn.className = 'mic-btn ' + s; btn.textContent = s==='listening'?'⏹':s==='processing'?'⏳':'🎤'; }
 
@@ -519,28 +558,50 @@ async function sendTranscript(){
   try {
     const reply = await fetchFromGemini('', key, true, boardroomHistory);
     boardroomHistory.push({ role: 'model', parts: [{ text: reply }] });
-    updateChatMsg(lid, reply);
-    speakText(reply);
-    logActivity('ناقش بفاعلية في غرفة الاجتماعات الذكية', '🎤');
-  } catch(e) { updateChatMsg(lid, '❌ خطأ في الاتصال: ' + e.message, 'error'); }
+    updateChatMsg(lid, formatAI(reply));
+    speakText(reply, true); // استمرار الحلقة بفتح المايك بعد الرد
+    logActivity('تفاعل في غرفة الاجتماعات (Live)', '🎤');
+  } catch(e) { 
+      updateChatMsg(lid, '❌ خطأ في الاتصال: ' + e.message, 'error'); 
+      isContinuousVoice = false;
+      document.getElementById('start-session-btn').style.display = 'block';
+  }
   setMicState('idle');
 }
 
-function speakText(t){
+function speakText(t, autoOpenMic = false){
   if(!window.speechSynthesis) return;
   window.speechSynthesis.cancel();
-  const u = new SpeechSynthesisUtterance(t);
+  
+  // تنظيف النص من علامات الماركدوان قبل النطق لتجنب نطق كلمة "نجمة نجمة"
+  const cleanTextForSpeech = t.replace(/\*/g, '').replace(/#/g, '');
+  
+  const u = new SpeechSynthesisUtterance(cleanTextForSpeech);
   u.lang = boardroomLang === 'en' ? 'en-US' : 'ar-SA';
-  u.rate = 0.9;
+  u.rate = 0.95;
+  
+  u.onend = function() {
+      // حلقة المايك المستمرة
+      if (autoOpenMic && isContinuousVoice) {
+          setTimeout(() => { startMic(); }, 600); // تأخير بسيط ليكون طبيعياً
+      }
+  };
+  
   window.speechSynthesis.speak(u);
 }
 
 function clearBoardroom(){
+  isContinuousVoice = false; // إيقاف الحلقة
   boardroomHistory = [];
-  document.getElementById('chat-area').innerHTML = '<div class="chat-msg system">تم تنظيف السجل. مستعدون لجلسة جديدة.</div>';
+  document.getElementById('chat-area').innerHTML = '<div class="chat-msg system">تم إيقاف الجلسة ومسح السجل.</div>';
+  document.getElementById('start-session-btn').style.display = 'block';
   if(window.speechSynthesis) window.speechSynthesis.cancel();
+  if(isListening) stopMic();
 }
 
+// ==========================================
+// المستشار الذكي وتحليل البيانات
+// ==========================================
 function renderAnalytics(){
   const el = document.getElementById('full-log');
   if(!activityLog.length) { el.innerHTML = '<div class="empty-state"><div class="empty-icon">📊</div>لا تتوفر بيانات كافية للتحليل حالياً</div>'; }
@@ -558,7 +619,7 @@ async function generateReport(){
   try {
     const logData = activityLog.slice(0, 40).map(l => `${l.time}: ${l.text}`).join('\n');
     const termsCount = Object.values(state.mastered).filter(Boolean).length;
-    const prompt = `أنت مدرب قيادات عليا (Executive Coach). قم بتحليل بيانات هذا المدير بدقة بناءً على سجله:\n\nالسجل المرجعي:\n${logData}\n\nالإحصاءات الحيوية: أتقن ${termsCount}/12 مصطلح تنفيذي، أكمل ${state.gymScore||0} تحدي أزمة، وأجاب ${state.memoryScore||0} تمرين ذاكرة.\n\nأريد تقريراً عميقاً مقسماً بوضوح كالتالي:\n1. نقاط القوة القيادية\n2. الفجوات ونقاط الضعف التي تحتاج لتدخل\n3. مستوى النضج المعرفي الحالي\n4. جرعة حقيقة صارمة (لا تجامله أبدًا)\n5. التوصية للخطوة القادمة\n\nأجب بالعربية فقط بشكل احترافي.`;
+    const prompt = `أنت مدرب قيادات عليا (Executive Coach). قم بتحليل بيانات هذا المدير بدقة بناءً على سجله:\n\nالسجل المرجعي:\n${logData}\n\nالإحصاءات الحيوية: أتقن ${termsCount}/12 مصطلح تنفيذي، أكمل ${state.gymScore||0} تحدي أزمة، وأجاب ${state.memoryScore||0} تمرين ذاكرة.\n\nأريد تقريراً عميقاً مقسماً بوضوح كالتالي:\n1. نقاط القوة القيادية\n2. الفجوات ونقاط الضعف التي تحتاج لتدخل\n3. مستوى النضج المعرفي الحالي\n4. جرعة حقيقة صارمة (لا تجامله أبدًا)\n5. التوصية للخطوة القادمة\n\nأجب بفقرة كاملة لكل نقطة دون قطع النص أبداً، بالعربية فقط وبشكل احترافي.`;
     
     const text = await fetchFromGemini(prompt, key);
     lastReport = { text: text, date: new Date().toLocaleString('ar-SA') };
@@ -574,7 +635,7 @@ function renderReport(r){
   const titles = ['💪 نقاط القوة القيادية', '⚠️ الفجوات ومناطق الخطر', '📈 النضج المعرفي', '🔥 الجرعة الصارمة', '🎯 الخطوة الاستراتيجية القادمة'];
   const sections = r.text.split(/\d+\.\s+/).filter(Boolean);
   document.getElementById('report-area').innerHTML = `<div style="font-size:10px;color:var(--text3);margin-bottom:8px;">تاريخ التقرير: ${r.date}</div>` + 
-    sections.map((s,i) => `<div class="report-card"><div class="report-section-title">${titles[i]||'📌 استنتاج إضافي'}</div><div class="report-text">${s.trim().replace(/\n/g, '<br>')}</div></div>`).join('');
+    sections.map((s,i) => `<div class="report-card"><div class="report-section-title">${titles[i]||'📌 استنتاج إضافي'}</div><div class="report-text">${formatAI(s.trim())}</div></div>`).join('');
 }
 
 loadState();
