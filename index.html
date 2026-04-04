@@ -502,9 +502,7 @@ function setBoardroomLang(lang){boardroomLang=lang;document.getElementById('br-a
 async function startBoardroomSession(){
   const key=getApiKey();if(!key){showToast('⚠️ أضف مفتاح Gemini أولاً');return;}
   boardroomHistory=[];document.getElementById('chat-area').innerHTML='';
-  const sysMsg=boardroomLang==='en'
-    const randomTopic2=TOPICS_POOL[Math.floor(Math.random()*TOPICS_POOL.length)];const seed2=Math.random().toString(36).substr(2,8);const sysMsg=boardroomLang==='en'?`You are a tough C-suite executive interviewer. Interview a PMO Director candidate. Ask ONE completely unique and unexpected question specifically about: "${randomTopic2}". Do NOT use common interview questions. Make it situational and difficult. Random Seed: ${seed2}. English only.`:`أنت محاور تنفيذي رفيع المستوى. تجري مقابلة مع مدير PMO. اسأل سؤالاً واحداً فريداً وغير متوقع يتعلق تحديداً بـ: "${randomTopic2}". لا تستخدم أسئلة شائعة. اجعله موقفياً وصعباً. Random: ${seed2}. عربية فقط.`;
-:'أنت محاور تنفيذي صارم. تجري مقابلة مع مدير PMO. اسأل سؤالاً واحداً صعباً. عربية فقط.';
+  const randomTopic2=TOPICS_POOL[Math.floor(Math.random()*TOPICS_POOL.length)];const seed2=Math.random().toString(36).substr(2,8);const sysMsg=boardroomLang==='en'?`You are a tough C-suite executive interviewer. Interview a PMO Director candidate. Ask ONE completely unique and unexpected question specifically about: "${randomTopic2}". Do NOT use common interview questions. Make it situational and difficult. Random Seed: ${seed2}. English only.`:`أنت محاور تنفيذي رفيع المستوى. تجري مقابلة مع مدير PMO. اسأل سؤالاً واحداً فريداً وغير متوقع يتعلق تحديداً بـ: "${randomTopic2}". لا تستخدم أسئلة شائعة. اجعله موقفياً وصعباً. Random: ${seed2}. عربية فقط.`;
   appendChat('system',boardroomLang==='en'?'Session started':'الجلسة بدأت');
   const lid=appendChat('ai','<span class="spinner"></span>');
   try{
