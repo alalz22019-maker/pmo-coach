@@ -303,7 +303,7 @@ function checkApiKey(){
 async function callGemini(prompt,sys=''){
   const key=getApiKey();
   if(!key){showToast('⚠️ أضف مفتاح Gemini في الإعدادات');throw new Error('No API key');}
-  const url=`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${key}`;
+  const url=`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${key}`;
   const msgs=[];
   if(sys)msgs.push({role:'user',parts:[{text:'[SYSTEM]: '+sys}]},{role:'model',parts:[{text:'فهمت.'}]});
   msgs.push({role:'user',parts:[{text:prompt}]});
@@ -315,7 +315,7 @@ async function callGemini(prompt,sys=''){
 async function callGeminiChat(msgs){
   const key=getApiKey();
   if(!key){showToast('⚠️ أضف مفتاح Gemini في الإعدادات');throw new Error('No API key');}
-  const url=`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${key}`;
+  const url=`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${key}`;
   const res=await fetch(url,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({contents:msgs})});
   if(!res.ok)throw new Error('API Error');
   const d=await res.json();
