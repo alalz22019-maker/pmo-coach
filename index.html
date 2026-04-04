@@ -9,17 +9,7 @@
 <title>Executive PMO Coach 2.0</title>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
-:root{
-  --navy:#0a0e1a;--navy2:#111827;--navy3:#1a2236;--navy4:#243047;
-  --gold:#c9a84c;--gold2:#e8c96a;--gold-dim:rgba(201,168,76,0.15);
-  --green:#22c55e;--green-dim:rgba(34,197,94,0.12);
-  --blue:#3b82f6;--blue-dim:rgba(59,130,246,0.1);
-  --purple:#a855f7;--purple-dim:rgba(168,85,247,0.12);
-  --red:#ef4444;--red-dim:rgba(239,68,68,0.12);
-  --text:#f1f5f9;--text2:#94a3b8;--text3:#475569;
-  --border:rgba(255,255,255,0.06);--border2:rgba(255,255,255,0.1);
-  --r:16px;--safe-top:env(safe-area-inset-top,44px);--safe-bottom:env(safe-area-inset-bottom,34px);
-}
+:root{--navy:#0a0e1a;--navy2:#111827;--navy3:#1a2236;--navy4:#243047;--gold:#c9a84c;--gold2:#e8c96a;--gold-dim:rgba(201,168,76,0.15);--green:#22c55e;--green-dim:rgba(34,197,94,0.12);--blue:#3b82f6;--blue-dim:rgba(59,130,246,0.1);--purple:#a855f7;--purple-dim:rgba(168,85,247,0.12);--red:#ef4444;--red-dim:rgba(239,68,68,0.12);--text:#f1f5f9;--text2:#94a3b8;--text3:#475569;--border:rgba(255,255,255,0.06);--border2:rgba(255,255,255,0.1);--r:16px;--safe-top:env(safe-area-inset-top,44px);--safe-bottom:env(safe-area-inset-bottom,34px);}
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
 body{font-family:'IBM Plex Sans Arabic',sans-serif;background:var(--navy);color:var(--text);min-height:100dvh;overflow-x:hidden;}
 .safe-top{height:var(--safe-top);}.safe-bottom{height:calc(var(--safe-bottom)+74px);}
@@ -46,7 +36,6 @@ body{font-family:'IBM Plex Sans Arabic',sans-serif;background:var(--navy);color:
 .btn-gold{background:var(--gold);color:var(--navy);}.btn-navy{background:var(--navy3);color:var(--text);border:1px solid var(--border2);}
 .btn-blue{background:var(--blue-dim);color:var(--blue);border:1px solid rgba(59,130,246,0.2);}
 .btn-purple{background:var(--purple-dim);color:var(--purple);border:1px solid rgba(168,85,247,0.2);}
-.btn-green{background:var(--green-dim);color:var(--green);border:1px solid rgba(34,197,94,0.2);}
 .btn-red{background:var(--red-dim);color:var(--red);border:1px solid rgba(239,68,68,0.2);}
 .btn-sm{padding:8px 14px;width:auto;font-size:12px;border-radius:10px;}
 .welcome-banner{background:linear-gradient(135deg,var(--navy3),var(--navy4));border:1px solid rgba(201,168,76,0.2);border-radius:var(--r);padding:18px;margin:10px 14px;}
@@ -88,6 +77,7 @@ body{font-family:'IBM Plex Sans Arabic',sans-serif;background:var(--navy);color:
 .chat-msg.ai{background:var(--blue-dim);border:1px solid rgba(59,130,246,0.15);align-self:flex-start;}
 .chat-msg.user{background:var(--gold-dim);border:1px solid rgba(201,168,76,0.15);align-self:flex-end;text-align:right;}
 .chat-msg.system{background:var(--navy4);color:var(--text2);font-size:11px;text-align:center;align-self:center;}
+.chat-msg.error{background:var(--red-dim);border:1px solid rgba(239,68,68,0.2);color:var(--red);align-self:center;font-size:11px;text-align:center;}
 .voice-controls{display:flex;gap:8px;align-items:center;}
 .mic-btn{width:54px;height:54px;border-radius:50%;border:none;cursor:pointer;font-size:22px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
 .mic-btn.idle{background:var(--navy3);border:2px solid var(--border2);}
@@ -106,23 +96,22 @@ body{font-family:'IBM Plex Sans Arabic',sans-serif;background:var(--navy);color:
 .toast.show{opacity:1;}
 .empty-state{text-align:center;padding:32px 16px;color:var(--text3);font-size:13px;}
 .empty-icon{font-size:36px;margin-bottom:10px;}
-/* API KEY BANNER */
-.api-banner{background:var(--red-dim);border:1px solid rgba(239,68,68,0.3);border-radius:12px;padding:12px 14px;margin:8px 14px;display:none;align-items:center;gap:10px;}
-.api-banner.show{display:flex;}
-.api-banner-text{font-size:12px;color:var(--red);flex:1;}
-.api-banner-btn{padding:6px 12px;border-radius:8px;border:none;background:var(--red);color:#fff;font-family:'IBM Plex Sans Arabic',sans-serif;font-size:11px;font-weight:700;cursor:pointer;white-space:nowrap;}
+.api-warn{background:var(--red-dim);border:1px solid rgba(239,68,68,0.3);border-radius:12px;padding:10px 14px;margin:8px 14px;font-size:12px;color:var(--red);display:none;}
+.api-warn.show{display:block;}
+input[type=text],input[type=password],textarea{width:100%;background:var(--navy3);border:1px solid var(--border2);border-radius:12px;padding:11px;color:var(--text);font-family:'IBM Plex Sans Arabic',sans-serif;font-size:13px;outline:none;resize:none;}
+input:focus,textarea:focus{border-color:rgba(201,168,76,0.4);}
 </style>
 </head>
 <body>
 <div class="safe-top"></div>
 <div id="screen-home" class="screen active">
   <div class="header"><div class="header-title">Executive PMO Coach</div><div class="header-sub" id="home-date"></div></div>
-  <div class="api-banner" id="api-banner">
-    <div class="api-banner-text">⚠️ مفتاح Gemini غير مضاف — الميزات الذكية لن تعمل</div>
-    <button class="api-banner-btn" onclick="switchNav('settings')">أضف المفتاح</button>
+  <div class="api-warn" id="api-warn">⚠️ أضف مفتاح Gemini API في الأسفل لتفعيل الميزات الذكية</div>
+  <div class="welcome-banner">
+    <div class="welcome-title">مرحباً، علي 👋</div>
+    <div class="welcome-sub">مستواك يتحدد بما تفعله يومياً.</div>
+    <div style="margin-top:12px;"><div class="progress-label"><span>التقدم الإجمالي</span><span id="total-pct">0%</span></div><div class="progress-track"><div class="progress-fill" id="total-bar" style="width:0%"></div></div></div>
   </div>
-  <div class="welcome-banner"><div class="welcome-title">مرحباً، علي 👋</div><div class="welcome-sub">مستواك يتحدد بما تفعله يومياً.</div>
-  <div style="margin-top:12px;"><div class="progress-label"><span>التقدم الإجمالي</span><span id="total-pct">0%</span></div><div class="progress-track"><div class="progress-fill" id="total-bar" style="width:0%"></div></div></div></div>
   <div class="section-label">الحالة الذهنية</div>
   <div style="padding:0 14px;">
     <div class="mood-row">
@@ -135,6 +124,12 @@ body{font-family:'IBM Plex Sans Arabic',sans-serif;background:var(--navy);color:
     <div class="stat-box"><div class="stat-num" id="stat-terms">0</div><div class="stat-lbl">مصطلح</div></div>
     <div class="stat-box"><div class="stat-num" id="stat-gym">0</div><div class="stat-lbl">تحدي</div></div>
     <div class="stat-box"><div class="stat-num" id="stat-log">0</div><div class="stat-lbl">نشاط</div></div>
+  </div>
+  <div class="section-label">🔑 مفتاح Gemini API</div>
+  <div style="padding:0 14px 14px;">
+    <input type="password" id="api-key-input" placeholder="AIzaSy..." style="margin-bottom:8px;">
+    <button class="btn btn-gold" onclick="saveApiKey()">💾 حفظ المفتاح</button>
+    <div id="api-key-status" style="font-size:11px;color:var(--text2);margin-top:6px;text-align:center;min-height:16px;"></div>
   </div>
   <div class="section-label">آخر الأنشطة</div>
   <div class="content"><div id="home-log"></div></div>
@@ -157,7 +152,7 @@ body{font-family:'IBM Plex Sans Arabic',sans-serif;background:var(--navy);color:
   <div class="content" style="padding-top:12px;">
     <div class="card" style="border-color:rgba(201,168,76,0.2);">
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
-        <div><div class="card-title">⚡ تحدي الـ 60 ثانية</div><div class="card-sub">أزمة مشروع — قرارك في دقيقة</div></div>
+        <div><div class="card-title">⚡ تحدي الـ 60 ثانية</div><div class="card-sub">سيناريو أزمة جديد من Gemini</div></div>
         <span class="badge badge-gold" id="gym-score-badge">0 تحدي</span>
       </div>
       <div id="challenge-area"><button class="btn btn-gold" onclick="startChallenge()">ابدأ التحدي ←</button></div>
@@ -205,34 +200,14 @@ body{font-family:'IBM Plex Sans Arabic',sans-serif;background:var(--navy);color:
   <div class="safe-bottom"></div>
 </div>
 
-<div id="screen-settings" class="screen">
-  <div class="header"><div class="header-title">الإعدادات</div><div class="header-sub">مفتاح Gemini API والبيانات</div></div>
-  <div class="content" style="padding-top:12px;">
-    <div class="card" style="border-color:rgba(201,168,76,0.3);">
-      <div class="card-title" style="margin-bottom:4px;">🔑 مفتاح Gemini API</div>
-      <div class="card-sub" style="margin-bottom:12px;">احصل عليه مجاناً من aistudio.google.com</div>
-      <input type="password" id="api-key-input" placeholder="AIzaSy..." style="width:100%;background:var(--navy3);border:1px solid var(--border2);border-radius:12px;padding:11px;color:var(--text);font-family:'IBM Plex Sans Arabic',sans-serif;font-size:13px;outline:none;margin-bottom:8px;">
-      <button class="btn btn-gold" onclick="saveApiKey()">💾 حفظ المفتاح</button>
-      <div id="api-key-status" style="font-size:11px;color:var(--text2);margin-top:8px;text-align:center;min-height:16px;"></div>
-    </div>
-    <div class="setting-item"><div><div style="font-size:13px;font-weight:500;">إجمالي الأنشطة</div><div style="font-size:11px;color:var(--text2);" id="total-activities">0 نشاط</div></div><span style="font-size:20px;">📈</span></div>
-    <div class="setting-item"><div><div style="font-size:13px;font-weight:500;">المصطلحات المتقنة</div><div style="font-size:11px;color:var(--text2);" id="mastered-count">0 من 12</div></div><span style="font-size:20px;">🧠</span></div>
-    <div class="setting-item" style="flex-direction:column;align-items:flex-start;gap:10px;"><div><div style="font-size:13px;font-weight:500;">إعادة ضبط كل شيء</div><div style="font-size:11px;color:var(--text2);">مسح جميع البيانات والتقدم</div></div><button class="btn btn-red btn-sm" onclick="resetAll()">🗑 إعادة الضبط</button></div>
-    <div style="text-align:center;padding:20px 0;color:var(--text3);font-size:11px;">Executive PMO Coach v2.0</div>
-  </div>
-  <div class="safe-bottom"></div>
-</div>
-
 <nav class="bottom-nav">
   <div class="nav-item active" id="nav-home" onclick="switchNav('home')"><span class="nav-icon">🏠</span><span class="nav-label">الرئيسية</span></div>
   <div class="nav-item" id="nav-lexicon" onclick="switchNav('lexicon');renderLexicon()"><span class="nav-icon">📚</span><span class="nav-label">القاموس</span></div>
   <div class="nav-item" id="nav-gym" onclick="switchNav('gym')"><span class="nav-icon">🧠</span><span class="nav-label">النادي</span></div>
   <div class="nav-item" id="nav-boardroom" onclick="switchNav('boardroom');initBoardroom()"><span class="nav-icon">🎤</span><span class="nav-label">الاجتماع</span></div>
   <div class="nav-item" id="nav-analytics" onclick="switchNav('analytics');renderAnalytics()"><span class="nav-icon">📊</span><span class="nav-label">المستشار</span></div>
-  <div class="nav-item" id="nav-settings" onclick="switchNav('settings')"><span class="nav-icon">⚙️</span><span class="nav-label">إعدادات</span></div>
 </nav>
 <div class="toast" id="toast"></div>
-
 <script>
 const SK='pmo_coach_v1',SK_API='pmo_gemini_key',SK_LOG='user_activity_log',SK_REPORT='pmo_last_report',SK_MOOD='pmo_mood';
 const TERMS={
@@ -255,34 +230,99 @@ const TERMS={
     {term:'Benefits Realization',ar:'تحقيق المنافع',def:'التحقق من تحقيق العوائد المخطط لها بعد التسليم.',ex:'تتبّعت KPIs بعد 6 أشهر من إطلاق المشاريع.'},
   ]
 };
-const CRISES=[
-  'اكتشفت في صباح يوم العرض النهائي أن مقاول رئيسي أفلس. المشروع يُسلّم بعد 72 ساعة. ماذا تفعل؟',
-  'وزير يطلب إضافة 3 مخرجات جديدة دون تمديد الجدول أو الميزانية. كيف تتعامل؟',
-  'فريقك الأساسي من 5 أشخاص استقال دفعة واحدة في منتصف مشروع حرج. ما خطتك؟',
-  'اكتشفت خللاً أمنياً في النظام الذي سلّمته الأسبوع الماضي. ماذا تفعل خلال أول ساعة؟',
-  'ميزانية مشروعك خُفِّضت 40% مع إلزامك بنفس النطاق والموعد. كيف تتصرف؟',
-  'مشروعك تأخر 6 أسابيع بسبب قرار حكومي مفاجئ. القيادة تطلب تقريراً الآن. ماذا تقول؟',
-  'عضو فريق رئيسي يرفض التعاون مع مزود خارجي. الخلاف يهدد الجدول. كيف تحله؟',
-];
+const TOPICS_POOL=['Sudden Budget Cuts 40%','Key Resource Resignation Mid-Project','Vendor Bankruptcy During Delivery','Force Majeure & Natural Disaster','Stakeholder Political Conflict','Scope Creep from Minister Directive','Cyber Attack on Project Data','Failed Compliance Audit','Critical System Failure at Launch','Team Burnout & Mass Sick Leave','Unrealistic Executive Deadline','Third-Party Integration Failure','Data Breach & Privacy Crisis','Regulatory Change Mid-Execution','Conflicting Priorities from Two Sponsors','Public Media Scandal on Project','Quality Failure After Delivery','Key Contractor Fraud Discovery','Government Freeze on Project Funds','Cultural Resistance to Change'];
+const CRISES_FALLBACK=['اكتشفت في صباح يوم العرض أن مقاول رئيسي أفلس والمشروع يُسلّم بعد 72 ساعة. ماذا تفعل؟','وزير يطلب إضافة 3 مخرجات جديدة دون تمديد الجدول أو الميزانية. كيف تتعامل؟','فريقك الأساسي استقال دفعة واحدة في منتصف مشروع حرج. ما خطتك؟','ميزانية مشروعك خُفِّضت 40% مع إلزامك بنفس النطاق والموعد. كيف تتصرف؟','مشروعك تأخر 6 أسابيع بسبب قرار حكومي مفاجئ والقيادة تطلب تقريراً الآن. ماذا تقول؟'];
 const MEMORY_DATA=[
   {facts:['الميزانية: 12 مليون ريال','المدة: 18 شهراً','المخاطر العالية: 7 مخاطر'],q:'كم عدد المخاطر العالية؟',a:'7'},
   {facts:['الفريق: 23 شخص','نسبة الإنجاز: 67%','الحالة: متأخر 3 أسابيع'],q:'كم نسبة الإنجاز الحالية؟',a:'67'},
   {facts:['العميل: وزارة الصحة','CPI: 0.87','SPI: 0.93'],q:'ما هي قيمة CPI للمشروع؟',a:'0.87'},
-  {facts:['عدد المشاريع: 14 مشروع','الميزانية الكلية: 85 مليون','نسبة الإنجاز: 43%'],q:'كم عدد المشاريع في المحفظة؟',a:'14'},
+  {facts:['عدد المشاريع: 14','الميزانية الكلية: 85 مليون','نسبة الإنجاز: 43%'],q:'كم عدد المشاريع في المحفظة؟',a:'14'},
 ];
+
 let state={mastered:{},gymScore:0,memoryScore:0,memoryTotal:0};
 let activityLog=[],lastReport=null,currentLevel='operational',geminiCache={};
 let boardroomHistory=[],boardroomLang='ar',recognition=null,isListening=false,currentTranscript='';
 let challengeState={active:false,timer:null,seconds:60,scenario:''},memoryState={};
-let usedCrises=[];
+let usedScenarios=[];
 
-function loadState(){
-  try{
-    const s=localStorage.getItem(SK);if(s)state={...state,...JSON.parse(s)};
-    const l=localStorage.getItem(SK_LOG);if(l)activityLog=JSON.parse(l);
-    const r=localStorage.getItem(SK_REPORT);if(r)lastReport=JSON.parse(r);
-  }catch(e){}
+// ══════════════════════════════════════════
+// CORE API FUNCTION
+// ══════════════════════════════════════════
+async function fetchFromGemini(prompt, apiKey) {
+  const models = ['gemini-1.5-flash', 'gemini-1.5-flash-latest', 'gemini-pro'];
+  let lastError = '';
+  for (const model of models) {
+    try {
+      const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
+      const response = await fetch(url, {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({
+          contents: [{parts: [{text: prompt}]}],
+          safetySettings: [
+            {category:"HARM_CATEGORY_HARASSMENT",threshold:"BLOCK_NONE"},
+            {category:"HARM_CATEGORY_HATE_SPEECH",threshold:"BLOCK_NONE"},
+            {category:"HARM_CATEGORY_SEXUALLY_EXPLICIT",threshold:"BLOCK_NONE"},
+            {category:"HARM_CATEGORY_DANGEROUS_CONTENT",threshold:"BLOCK_NONE"}
+          ],
+          generationConfig: {temperature: 1.0, maxOutputTokens: 1024, topP: 0.95, topK: 64}
+        })
+      });
+      const data = await response.json();
+      if (!response.ok) {
+        lastError = data.error?.message || `HTTP ${response.status}`;
+        console.error(`Model ${model} failed:`, lastError);
+        continue;
+      }
+      if (data.candidates?.[0]?.content?.parts?.[0]?.text) {
+        return data.candidates[0].content.parts[0].text;
+      }
+      if (data.candidates?.[0]?.finishReason === 'SAFETY') {
+        lastError = 'محتوى محجوب - جرب صياغة مختلفة';
+        continue;
+      }
+      lastError = 'لم يتم إرجاع نص';
+    } catch (e) {
+      lastError = e.message;
+      console.error(`Model ${model} error:`, e);
+    }
+  }
+  throw new Error(lastError || 'فشل الاتصال بجميع الموديلات');
 }
+
+async function fetchFromGeminiChat(messages, apiKey) {
+  const models = ['gemini-1.5-flash', 'gemini-1.5-flash-latest', 'gemini-pro'];
+  let lastError = '';
+  for (const model of models) {
+    try {
+      const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
+      const response = await fetch(url, {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({
+          contents: messages,
+          safetySettings: [
+            {category:"HARM_CATEGORY_HARASSMENT",threshold:"BLOCK_NONE"},
+            {category:"HARM_CATEGORY_HATE_SPEECH",threshold:"BLOCK_NONE"},
+            {category:"HARM_CATEGORY_SEXUALLY_EXPLICIT",threshold:"BLOCK_NONE"},
+            {category:"HARM_CATEGORY_DANGEROUS_CONTENT",threshold:"BLOCK_NONE"}
+          ],
+          generationConfig: {temperature: 1.0, maxOutputTokens: 1024, topP: 0.95, topK: 64}
+        })
+      });
+      const data = await response.json();
+      if (!response.ok) { lastError = data.error?.message || `HTTP ${response.status}`; continue; }
+      if (data.candidates?.[0]?.content?.parts?.[0]?.text) return data.candidates[0].content.parts[0].text;
+      lastError = 'لم يتم إرجاع نص';
+    } catch(e) { lastError = e.message; }
+  }
+  throw new Error(lastError || 'فشل الاتصال');
+}
+
+// ══════════════════════════════════════════
+// STATE & STORAGE
+// ══════════════════════════════════════════
+function loadState(){try{const s=localStorage.getItem(SK);if(s)state={...state,...JSON.parse(s)};const l=localStorage.getItem(SK_LOG);if(l)activityLog=JSON.parse(l);const r=localStorage.getItem(SK_REPORT);if(r)lastReport=JSON.parse(r);}catch(e){}}
 function saveState(){try{localStorage.setItem(SK,JSON.stringify(state));}catch(e){}}
 function saveLog(){try{localStorage.setItem(SK_LOG,JSON.stringify(activityLog.slice(-100)));}catch(e){}}
 function logActivity(text,icon='📌'){activityLog.unshift({text,icon,time:new Date().toLocaleString('ar-SA',{hour:'2-digit',minute:'2-digit',day:'numeric',month:'short'})});saveLog();updateHomeStats();}
@@ -291,49 +331,30 @@ function saveApiKey(){
   const k=document.getElementById('api-key-input').value.trim();
   if(!k){showToast('أدخل المفتاح أولاً');return;}
   localStorage.setItem(SK_API,k);
-  document.getElementById('api-key-status').textContent='✅ تم الحفظ بنجاح';
-  document.getElementById('api-banner').classList.remove('show');
+  document.getElementById('api-key-status').textContent='✅ تم الحفظ';
+  document.getElementById('api-warn').classList.remove('show');
   showToast('✅ تم حفظ مفتاح Gemini');
 }
 function checkApiKey(){
   const k=getApiKey();
-  if(!k)document.getElementById('api-banner').classList.add('show');
-  else document.getElementById('api-banner').classList.remove('show');
+  document.getElementById('api-warn').classList.toggle('show',!k);
+  if(k){document.getElementById('api-key-input').value=k;document.getElementById('api-key-status').textContent='✅ المفتاح محفوظ';}
 }
-async function callGemini(prompt,sys=''){
-  const key=getApiKey();
-  if(!key){showToast('⚠️ أضف مفتاح Gemini في الإعدادات');throw new Error('No API key');}
-  const url=`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${key}`;
-  const msgs=[];
-  if(sys)msgs.push({role:'user',parts:[{text:'[SYSTEM]: '+sys}]},{role:'model',parts:[{text:'فهمت.'}]});
-  msgs.push({role:'user',parts:[{text:prompt}]});
-  const res=await fetch(url,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({contents:msgs})});
-  if(!res.ok){const e=await res.json();throw new Error(e?.error?.message||'API Error '+res.status);}
-  const d=await res.json();
-  return d.candidates?.[0]?.content?.parts?.[0]?.text||'';
-}
-async function callGeminiChat(msgs){
-  const key=getApiKey();
-  if(!key){showToast('⚠️ أضف مفتاح Gemini في الإعدادات');throw new Error('No API key');}
-  const url=`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${key}`;
-  const res=await fetch(url,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({contents:msgs})});
-  if(!res.ok)throw new Error('API Error');
-  const d=await res.json();
-  return d.candidates?.[0]?.content?.parts?.[0]?.text||'';
-}
+
+// ══════════════════════════════════════════
+// NAVIGATION
+// ══════════════════════════════════════════
 function switchNav(id){
   document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
   document.getElementById('nav-'+id)?.classList.add('active');
   document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
   document.getElementById('screen-'+id)?.classList.add('active');
-  if(id==='settings'){
-    document.getElementById('api-key-input').value=getApiKey();
-    const terms=Object.values(state.mastered).filter(Boolean).length;
-    setText('mastered-count',terms+' من 12');
-    setText('total-activities',activityLog.length+' نشاط');
-  }
   window.scrollTo(0,0);
 }
+
+// ══════════════════════════════════════════
+// HOME
+// ══════════════════════════════════════════
 function setMood(c){
   ['green','yellow','red'].forEach(x=>document.getElementById('mood-'+x).classList.remove('green','yellow','red'));
   document.getElementById('mood-'+c).classList.add(c);
@@ -346,29 +367,24 @@ function updateHomeStats(){
   const t=Object.values(state.mastered).filter(Boolean).length;
   setText('stat-terms',t);setText('stat-gym',state.gymScore||0);setText('stat-log',activityLog.length);
   const pct=Math.round(Math.min((t/12+(state.gymScore||0)/10)/2,1)*100);
-  setBar('total-bar','total-pct',pct);
-  renderHomeLog();
+  setBar('total-bar','total-pct',pct);renderHomeLog();
 }
 function renderHomeLog(){
   const el=document.getElementById('home-log');
   if(!activityLog.length){el.innerHTML='<div class="empty-state"><div class="empty-icon">🌱</div>لا أنشطة بعد — ابدأ التدريب!</div>';return;}
   el.innerHTML=activityLog.slice(0,5).map(l=>`<div class="log-item"><div class="log-dot"></div><div class="log-text">${l.icon} ${l.text}</div><div class="log-time">${l.time}</div></div>`).join('');
 }
-function setLevel(l){
-  currentLevel=l;
-  document.querySelectorAll('.level-tab').forEach(t=>t.classList.remove('active'));
-  document.getElementById('tab-'+l.substring(0,3)).classList.add('active');
-  renderLexicon();
-}
+
+// ══════════════════════════════════════════
+// LEXICON
+// ══════════════════════════════════════════
+function setLevel(l){currentLevel=l;document.querySelectorAll('.level-tab').forEach(t=>t.classList.remove('active'));document.getElementById('tab-'+l.substring(0,3)).classList.add('active');renderLexicon();}
 function renderLexicon(){
-  const terms=TERMS[currentLevel];
-  const base=currentLevel==='operational'?0:currentLevel==='tactical'?4:8;
+  const terms=TERMS[currentLevel];const base=currentLevel==='operational'?0:currentLevel==='tactical'?4:8;
   document.getElementById('flashcard-list').innerHTML=terms.map((t,i)=>{
     const idx=base+i;const m=state.mastered[idx];
     return`<div class="flashcard ${m?'flipped':''}" id="fc-${idx}">
-      <div class="fc-front" onclick="flipCard(${idx})">
-        <div class="fc-term">${t.term}</div><div class="fc-term-ar">${t.ar}</div><div class="fc-hint">انقر للتعريف ←</div>
-      </div>
+      <div class="fc-front" onclick="flipCard(${idx})"><div class="fc-term">${t.term}</div><div class="fc-term-ar">${t.ar}</div><div class="fc-hint">انقر للتعريف ←</div></div>
       <div class="fc-back">
         <div class="fc-def">${t.def}</div>
         <div class="fc-example"><div class="fc-ex-label">مثال:</div>${t.ex}</div>
@@ -381,52 +397,54 @@ function renderLexicon(){
 }
 function flipCard(i){document.getElementById('fc-'+i)?.classList.toggle('flipped');}
 async function explainWithGemini(idx,term){
-  const btn=document.getElementById('explain-btn-'+idx);
-  const res=document.getElementById('gemini-'+idx);
-  const txt=document.getElementById('gemini-text-'+idx);
+  const key=getApiKey();if(!key){showToast('⚠️ أضف مفتاح Gemini أولاً');return;}
+  const btn=document.getElementById('explain-btn-'+idx);const res=document.getElementById('gemini-'+idx);const txt=document.getElementById('gemini-text-'+idx);
   if(geminiCache[term]){txt.textContent=geminiCache[term];res.classList.add('visible');return;}
   btn.innerHTML='<span class="spinner"></span>';btn.disabled=true;
   try{
-    const t=await callGemini(`اشرح "${term}" بأسلوب عملي لمدير PMO في مقابلة C-suite. 1) تعريف دقيق في جملتين 2) تطبيق في وزارة حكومية سعودية 3) جملة واحدة تقولها في المقابلة. بالعربية مختصراً.`);
+    const t=await fetchFromGemini(`اشرح مصطلح "${term}" بأسلوب عملي لمدير PMO في مقابلة C-suite سعودية. اذكر: 1) تعريف دقيق في جملتين 2) تطبيق في بيئة حكومية سعودية 3) جملة واحدة تقولها في المقابلة. بالعربية مختصراً.`,key);
     geminiCache[term]=t;txt.textContent=t;res.classList.add('visible');
     logActivity('شرح Gemini: '+term,'✨');
     btn.innerHTML='✨ شرح Gemini';btn.disabled=false;
-  }catch(e){btn.innerHTML='✨ شرح Gemini';btn.disabled=false;showToast('❌ '+e.message);}
+  }catch(e){
+    txt.textContent='❌ '+e.message;res.classList.add('visible');
+    btn.innerHTML='✨ شرح Gemini';btn.disabled=false;
+  }
 }
 function toggleMastered(idx){
   state.mastered[idx]=!state.mastered[idx];saveState();updateHomeStats();renderLexicon();
   if(state.mastered[idx]){const all=[...TERMS.operational,...TERMS.tactical,...TERMS.executive];logActivity('إتقان: '+all[idx]?.term,'🧠');showToast('🧠 ممتاز!');}
 }
-function getNextCrisis(){
-  if(usedCrises.length>=CRISES.length)usedCrises=[];
-  const available=CRISES.filter((_,i)=>!usedCrises.includes(i));
-  const idx=CRISES.indexOf(available[Math.floor(Math.random()*available.length)]);
-  usedCrises.push(idx);return CRISES[idx];
-}
+
+// ══════════════════════════════════════════
+// GYM - CHALLENGE
+// ══════════════════════════════════════════
 async function startChallenge(){
+  const key=getApiKey();
   const area=document.getElementById('challenge-area');
   area.innerHTML=`<div style="text-align:center;padding:20px;"><span class="spinner spinner-gold"></span><div style="color:var(--text2);font-size:12px;margin-top:8px;">Gemini يولّد سيناريو جديد...</div></div>`;
   let scenario='';
-  try{
-    const used=usedCrises.join('، ');
-    scenario=await callGemini(`أنت خبير إدارة مشاريع. أنشئ سيناريو أزمة واحد جديد ومختلف لمدير PMO في بيئة حكومية سعودية.${used?` لا تكرر هذه السيناريوهات: ${used}`:''}
-الشروط: جملة واحدة فقط، واضحة ومباشرة، تنتهي بسؤال "ماذا تفعل؟" أو "كيف تتصرف؟". بالعربية فقط.`);
-    scenario=scenario.trim();
-    usedCrises.push(scenario.substring(0,30));
-    if(usedCrises.length>10)usedCrises.shift();
-  }catch(e){
-    scenario=CRISES[Math.floor(Math.random()*CRISES.length)];
-    showToast('⚠️ سيناريو احتياطي');
+  if(key){
+    try{
+      const used=usedScenarios.slice(-3).join(' | ');
+      const randomTopic=TOPICS_POOL[Math.floor(Math.random()*TOPICS_POOL.length)];const seed=Math.random().toString(36).substr(2,8);
+scenario=await fetchFromGemini(`أنت محاور تنفيذي صارم. أنشئ سيناريو أزمة فريد ومفاجئ لمدير PMO في وزارة حكومية سعودية يتعلق تحديداً بـ: "${randomTopic}". لا تكرر أمثلة شائعة. اكتب جملتين فقط تنتهيان بسؤال مباشر. Random: ${seed}. بالعربية فقط.`,key);
+      scenario=scenario.trim().replace(/\n/g,' ');
+      usedScenarios.push(scenario.substring(0,40));
+      if(usedScenarios.length>10)usedScenarios.shift();
+    }catch(e){scenario=CRISES_FALLBACK[Math.floor(Math.random()*CRISES_FALLBACK.length)];showToast('⚠️ سيناريو احتياطي: '+e.message);}
+  } else {
+    scenario=CRISES_FALLBACK[Math.floor(Math.random()*CRISES_FALLBACK.length)];
+    showToast('⚠️ أضف مفتاح Gemini للحصول على سيناريوهات جديدة');
   }
   challengeState={active:true,seconds:60,scenario,timer:null};
   area.innerHTML=`<div class="timer-ring"><svg width="80" height="80" viewBox="0 0 80 80"><circle class="bg" cx="40" cy="40" r="35"/><circle class="fg" id="timer-circle" cx="40" cy="40" r="35" stroke-dasharray="219.9" stroke-dashoffset="0"/></svg><div class="timer-num" id="timer-num">60</div></div>
   <div style="background:var(--navy3);border-radius:12px;padding:12px;margin-bottom:10px;font-size:13px;line-height:1.7;border:1px solid rgba(201,168,76,0.15);">🚨 ${scenario}</div>
-  <textarea id="challenge-answer" placeholder="اكتب قرارك..." rows="4" style="width:100%;background:var(--navy3);border:1px solid var(--border2);border-radius:12px;padding:11px;color:var(--text);font-family:'IBM Plex Sans Arabic',sans-serif;font-size:13px;resize:none;outline:none;"></textarea>
+  <textarea id="challenge-answer" placeholder="اكتب قرارك..." rows="4"></textarea>
   <button class="btn btn-gold" style="margin-top:8px;" onclick="submitChallenge()">إرسال للتقييم ✨</button>`;
   const circ=document.getElementById('timer-circle');
   challengeState.timer=setInterval(()=>{
-    challengeState.seconds--;
-    setText('timer-num',challengeState.seconds);
+    challengeState.seconds--;setText('timer-num',challengeState.seconds);
     circ.style.strokeDashoffset=219.9*(1-challengeState.seconds/60);
     if(challengeState.seconds<=0){clearInterval(challengeState.timer);submitChallenge();}
   },1000);
@@ -435,153 +453,155 @@ async function submitChallenge(){
   clearInterval(challengeState.timer);
   const ans=document.getElementById('challenge-answer')?.value.trim();
   if(!ans){showToast('اكتب إجابتك أولاً');return;}
+  const key=getApiKey();
   const area=document.getElementById('challenge-area');
   area.innerHTML=`<div style="text-align:center;padding:16px;"><span class="spinner spinner-gold"></span><div style="color:var(--text2);font-size:12px;margin-top:8px;">Gemini يقيّم قرارك...</div></div>`;
-  try{
-    const fb=await callGemini(`أنت مدير تنفيذي صارم. قيّم هذا القرار:\nالأزمة: ${challengeState.scenario}\nالقرار: ${ans}\n1) نقاط القوة 2) ثغرات خطيرة 3) ما يجب فعله أولاً 4) تقييم من 10. بحزم وبالعربية.`);
-    state.gymScore=(state.gymScore||0)+1;saveState();updateHomeStats();
-    logActivity('أكمل تحدي الـ 60 ثانية','⚡');
-    setText('gym-score-badge',state.gymScore+' تحدي');
-    area.innerHTML=`<div class="report-card" style="margin-bottom:10px;"><div class="report-section-title">🤖 تقييم Gemini</div><div class="report-text">${fb}</div></div><button class="btn btn-gold" onclick="startChallenge()">تحدي جديد ←</button>`;
-  }catch(e){area.innerHTML=`<div style="color:var(--red);text-align:center;padding:12px;">❌ ${e.message}</div><button class="btn btn-navy" onclick="startChallenge()" style="margin-top:8px;">حاول مجدداً</button>`;}
+  let fb='';
+  if(key){
+    try{fb=await fetchFromGemini(`أنت مدير تنفيذي صارم. قيّم:\nالأزمة: ${challengeState.scenario}\nالقرار: ${ans}\n1) نقاط القوة 2) ثغرات خطيرة 3) ما يجب فعله أولاً 4) تقييم من 10. بالعربية.`,key);}
+    catch(e){fb=`❌ خطأ في التقييم: ${e.message}`;}
+  } else {fb='⚠️ أضف مفتاح Gemini للحصول على تقييم حقيقي.';}
+  state.gymScore=(state.gymScore||0)+1;saveState();updateHomeStats();
+  logActivity('أكمل تحدي الـ 60 ثانية','⚡');setText('gym-score-badge',state.gymScore+' تحدي');
+  area.innerHTML=`<div class="report-card" style="margin-bottom:10px;"><div class="report-section-title">🤖 تقييم Gemini</div><div class="report-text">${fb}</div></div><button class="btn btn-gold" onclick="startChallenge()">تحدي جديد ←</button>`;
 }
+
+// ══════════════════════════════════════════
+// GYM - MEMORY
+// ══════════════════════════════════════════
 function startMemory(){
-  const idx=Math.floor(Math.random()*MEMORY_DATA.length);
-  const data=MEMORY_DATA[idx];memoryState={idx,data};
+  const idx=Math.floor(Math.random()*MEMORY_DATA.length);const data=MEMORY_DATA[idx];
   const area=document.getElementById('memory-area');
   area.innerHTML=`<div style="text-align:center;color:var(--text2);font-size:12px;margin-bottom:8px;">احفظ — تختفي بعد 5 ثوانٍ</div>
   <div class="memory-card-grid">${data.facts.map(f=>`<div class="mem-card">${f}</div>`).join('')}</div>
   <div style="text-align:center;"><span id="mem-countdown" style="font-size:28px;font-weight:700;color:var(--purple);">5</span></div>`;
-  let c=5;
-  const t=setInterval(()=>{c--;setText('mem-countdown',c);if(c<=0){clearInterval(t);showMemoryQuestion(data);}},1000);
+  let c=5;const t=setInterval(()=>{c--;setText('mem-countdown',c);if(c<=0){clearInterval(t);showMemoryQ(data);}},1000);
 }
-function showMemoryQuestion(data){
+function showMemoryQ(data){
   document.getElementById('memory-area').innerHTML=`<div style="background:var(--navy3);border-radius:12px;padding:14px;margin-bottom:10px;font-size:14px;font-weight:600;">${data.q}</div>
-  <input type="text" id="mem-answer" placeholder="إجابتك..." style="width:100%;background:var(--navy3);border:1px solid var(--border2);border-radius:12px;padding:11px;color:var(--text);font-family:'IBM Plex Sans Arabic',sans-serif;font-size:13px;outline:none;margin-bottom:8px;">
+  <input type="text" id="mem-answer" placeholder="إجابتك..." style="margin-bottom:8px;">
   <button class="btn btn-purple" onclick="checkMemory('${data.a}')">تحقق من الإجابة</button>`;
 }
 function checkMemory(correct){
-  const ans=document.getElementById('mem-answer')?.value.trim().toLowerCase().replace(/\s/g,'');
+  const ans=(document.getElementById('mem-answer')?.value||'').trim().toLowerCase().replace(/\s/g,'');
   const ok=ans.includes(correct.toLowerCase().replace(/\s/g,''));
-  state.memoryScore=(state.memoryScore||0)+(ok?1:0);
-  state.memoryTotal=(state.memoryTotal||0)+1;
+  state.memoryScore=(state.memoryScore||0)+(ok?1:0);state.memoryTotal=(state.memoryTotal||0)+1;
   saveState();setText('memory-score',`${state.memoryScore}/${state.memoryTotal}`);
   document.getElementById('memory-area').innerHTML=`<div style="text-align:center;padding:16px;">
     <div style="font-size:40px;margin-bottom:8px;">${ok?'✅':'❌'}</div>
-    <div style="font-size:14px;font-weight:600;color:${ok?'var(--green)':'var(--red)'};">${ok?'إجابة صحيحة!':'الإجابة الصحيحة: '+correct}</div>
+    <div style="font-size:14px;font-weight:600;color:${ok?'var(--green)':'var(--red)'};">${ok?'إجابة صحيحة!':'الإجابة: '+correct}</div>
   </div><button class="btn btn-purple" onclick="startMemory()" style="margin-top:8px;">جولة جديدة ←</button>`;
   if(ok)logActivity('اجتاز تمرين الذاكرة','🧩');
 }
-function initBoardroom(){
-  const area=document.getElementById('chat-area');
-  if(!area.children.length)area.innerHTML='<div class="chat-msg system">اضغط "بدء جلسة جديدة" للبدء</div>';
-}
-function setBoardroomLang(lang){
-  boardroomLang=lang;
-  document.getElementById('br-ar').style.opacity=lang==='ar'?'1':'0.5';
-  document.getElementById('br-en').style.opacity=lang==='en'?'1':'0.5';
-}
+
+// ══════════════════════════════════════════
+// BOARDROOM
+// ══════════════════════════════════════════
+function initBoardroom(){const area=document.getElementById('chat-area');if(!area.children.length)area.innerHTML='<div class="chat-msg system">اضغط "بدء جلسة جديدة" للبدء</div>';}
+function setBoardroomLang(lang){boardroomLang=lang;document.getElementById('br-ar').style.opacity=lang==='ar'?'1':'0.5';document.getElementById('br-en').style.opacity=lang==='en'?'1':'0.5';}
 async function startBoardroomSession(){
-  boardroomHistory=[];
-  const area=document.getElementById('chat-area');area.innerHTML='';
-  const sys=boardroomLang==='en'
-    ?'You are a tough executive interviewer at a prestigious organization. You are interviewing a PMO Director candidate. Ask ONE challenging, specific interview question. Be professional and demanding. Respond in English only.'
-    :'أنت محاور تنفيذي صارم في منظمة مرموقة. تجري مقابلة مع مدير PMO. اسأل سؤالاً واحداً محدداً وصعباً. كن محترفاً ومطالباً. استخدم العربية فقط.';
-  appendChat('system',boardroomLang==='en'?'Session started — respond in English':'الجلسة بدأت — أجب بالعربية');
+  const key=getApiKey();if(!key){showToast('⚠️ أضف مفتاح Gemini أولاً');return;}
+  boardroomHistory=[];document.getElementById('chat-area').innerHTML='';
+  const sysMsg=boardroomLang==='en'
+    const randomTopic2=TOPICS_POOL[Math.floor(Math.random()*TOPICS_POOL.length)];const seed2=Math.random().toString(36).substr(2,8);const sysMsg=boardroomLang==='en'?`You are a tough C-suite executive interviewer. Interview a PMO Director candidate. Ask ONE completely unique and unexpected question specifically about: "${randomTopic2}". Do NOT use common interview questions. Make it situational and difficult. Random Seed: ${seed2}. English only.`:`أنت محاور تنفيذي رفيع المستوى. تجري مقابلة مع مدير PMO. اسأل سؤالاً واحداً فريداً وغير متوقع يتعلق تحديداً بـ: "${randomTopic2}". لا تستخدم أسئلة شائعة. اجعله موقفياً وصعباً. Random: ${seed2}. عربية فقط.`;
+:'أنت محاور تنفيذي صارم. تجري مقابلة مع مدير PMO. اسأل سؤالاً واحداً صعباً. عربية فقط.';
+  appendChat('system',boardroomLang==='en'?'Session started':'الجلسة بدأت');
   const lid=appendChat('ai','<span class="spinner"></span>');
   try{
-    const q=await callGemini(boardroomLang==='en'?'Start the interview with one tough question.':'ابدأ المقابلة بسؤال واحد صعب.',sys);
-    boardroomHistory=[{role:'user',parts:[{text:'ابدأ'}]},{role:'model',parts:[{text:q}]}];
+    boardroomHistory=[{role:'user',parts:[{text:sysMsg}]},{role:'model',parts:[{text:'فهمت، سأبدأ المقابلة.'}]},{role:'user',parts:[{text:'ابدأ.'}]}];
+    const q=await fetchFromGeminiChat(boardroomHistory,key);
+    boardroomHistory.push({role:'model',parts:[{text:q}]});
     updateChatMsg(lid,q);speakText(q);
-  }catch(e){updateChatMsg(lid,'❌ '+e.message);}
+  }catch(e){updateChatMsg(lid,'❌ '+e.message,'error');}
 }
 function appendChat(type,text){
   const area=document.getElementById('chat-area');
-  const id='msg-'+Date.now()+Math.random();
-  const div=document.createElement('div');
-  div.className='chat-msg '+type;div.id=id;div.innerHTML=text;
+  const id='msg-'+Date.now()+Math.random().toString(36).substr(2,5);
+  const div=document.createElement('div');div.className='chat-msg '+type;div.id=id;div.innerHTML=text;
   area.appendChild(div);area.scrollTop=area.scrollHeight;return id;
 }
-function updateChatMsg(id,text){
-  const el=document.getElementById(id);if(el)el.innerHTML=text;
+function updateChatMsg(id,text,type=''){
+  const el=document.getElementById(id);
+  if(el){el.innerHTML=text;if(type)el.className='chat-msg '+type;}
   document.getElementById('chat-area').scrollTop=99999;
 }
 function toggleMic(){if(isListening){stopMic();return;}startMic();}
 function startMic(){
   const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
   if(!SR){showToast('المتصفح لا يدعم التعرف على الصوت');return;}
-  recognition=new SR();
-  recognition.lang=boardroomLang==='en'?'en-US':'ar-SA';
+  recognition=new SR();recognition.lang=boardroomLang==='en'?'en-US':'ar-SA';
   recognition.continuous=false;recognition.interimResults=true;
   recognition.onstart=()=>{isListening=true;setMicState('listening');};
   recognition.onresult=(e)=>{let t='';for(let i=e.resultIndex;i<e.results.length;i++)t+=e.results[i][0].transcript;currentTranscript=t;document.getElementById('transcript-preview').textContent=t;document.getElementById('send-voice-btn').style.display=t?'flex':'none';};
   recognition.onend=()=>{isListening=false;setMicState('idle');};
-  recognition.onerror=()=>{isListening=false;setMicState('idle');showToast('خطأ في المايكروفون');};
+  recognition.onerror=(e)=>{isListening=false;setMicState('idle');showToast('خطأ: '+e.error);};
   recognition.start();
 }
 function stopMic(){recognition?.stop();isListening=false;setMicState('idle');}
 function setMicState(s){const btn=document.getElementById('mic-btn');btn.className='mic-btn '+s;btn.textContent=s==='listening'?'⏹':s==='processing'?'⏳':'🎤';}
 async function sendTranscript(){
   if(!currentTranscript.trim())return;
+  const key=getApiKey();if(!key){showToast('⚠️ أضف مفتاح Gemini أولاً');return;}
   const text=currentTranscript;currentTranscript='';
-  document.getElementById('transcript-preview').textContent='';
-  document.getElementById('send-voice-btn').style.display='none';
-  appendChat('user',text);
-  boardroomHistory.push({role:'user',parts:[{text}]});
-  setMicState('processing');
-  const lid=appendChat('ai','<span class="spinner"></span>');
+  document.getElementById('transcript-preview').textContent='';document.getElementById('send-voice-btn').style.display='none';
+  appendChat('user',text);boardroomHistory.push({role:'user',parts:[{text}]});
+  setMicState('processing');const lid=appendChat('ai','<span class="spinner"></span>');
   try{
-    const reply=await callGeminiChat(boardroomHistory);
+    const reply=await fetchFromGeminiChat(boardroomHistory,key);
     boardroomHistory.push({role:'model',parts:[{text:reply}]});
-    updateChatMsg(lid,reply);speakText(reply);
-    logActivity('محادثة مقابلة تنفيذية','🎤');
-  }catch(e){updateChatMsg(lid,'❌ '+e.message);}
+    updateChatMsg(lid,reply);speakText(reply);logActivity('محادثة مقابلة تنفيذية','🎤');
+  }catch(e){updateChatMsg(lid,'❌ '+e.message,'error');}
   setMicState('idle');
 }
-function speakText(t){
-  if(!window.speechSynthesis)return;
-  window.speechSynthesis.cancel();
-  const u=new SpeechSynthesisUtterance(t);
-  u.lang=boardroomLang==='en'?'en-US':'ar-SA';u.rate=0.9;
-  window.speechSynthesis.speak(u);
-}
+function speakText(t){if(!window.speechSynthesis)return;window.speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(t);u.lang=boardroomLang==='en'?'en-US':'ar-SA';u.rate=0.9;window.speechSynthesis.speak(u);}
 function clearBoardroom(){boardroomHistory=[];document.getElementById('chat-area').innerHTML='<div class="chat-msg system">تم مسح المحادثة</div>';window.speechSynthesis?.cancel();}
+
+// ══════════════════════════════════════════
+// ANALYTICS
+// ══════════════════════════════════════════
 function renderAnalytics(){
   const el=document.getElementById('full-log');
-  if(!activityLog.length){el.innerHTML='<div class="empty-state"><div class="empty-icon">📊</div>لا أنشطة بعد</div>';}
-  else{el.innerHTML=activityLog.slice(0,20).map(l=>`<div class="log-item"><div class="log-dot"></div><div class="log-text">${l.icon} ${l.text}</div><div class="log-time">${l.time}</div></div>`).join('');}
+  if(!activityLog.length)el.innerHTML='<div class="empty-state"><div class="empty-icon">📊</div>لا أنشطة بعد</div>';
+  else el.innerHTML=activityLog.slice(0,20).map(l=>`<div class="log-item"><div class="log-dot"></div><div class="log-text">${l.icon} ${l.text}</div><div class="log-time">${l.time}</div></div>`).join('');
   if(lastReport)renderReport(lastReport);
 }
 async function generateReport(){
   if(!activityLog.length){showToast('لا يوجد نشاط بعد');return;}
-  const btn=document.getElementById('report-btn');
-  btn.innerHTML='<span class="spinner spinner-gold"></span> Gemini يحلل...';btn.disabled=true;
+  const key=getApiKey();if(!key){showToast('⚠️ أضف مفتاح Gemini أولاً');return;}
+  const btn=document.getElementById('report-btn');btn.innerHTML='<span class="spinner spinner-gold"></span> Gemini يحلل...';btn.disabled=true;
   try{
     const log=activityLog.slice(0,30).map(l=>`${l.time}: ${l.icon} ${l.text}`).join('\n');
     const terms=Object.values(state.mastered).filter(Boolean).length;
-    const text=await callGemini(`أنت مستشار تنفيذي خبير. حلّل نشاط هذا المدير التنفيذي:\n\nالسجل:\n${log}\n\nإحصاءات: أتقن ${terms}/12 مصطلح، أكمل ${state.gymScore||0} تحدي.\n\n1. نقاط القوة الواضحة\n2. نقاط الضعف والثغرات\n3. مستوى التطور والنضج القيادي\n4. جرعة تحفيزية صارمة\n5. الخطوة التالية المحددة\n\nأجب بالعربية مباشرة وبأسلوب صريح.`);
+    const text=await fetchFromGemini(`أنت مستشار تنفيذي خبير. حلّل نشاط هذا المدير:\n\nالسجل:\n${log}\n\nإحصاءات: أتقن ${terms}/12 مصطلح، أكمل ${state.gymScore||0} تحدي.\n\n1. نقاط القوة\n2. نقاط الضعف\n3. مستوى النضج القيادي\n4. جرعة تحفيزية صارمة\n5. الخطوة التالية\n\nبالعربية مباشرة.`,key);
     lastReport={text,date:new Date().toLocaleString('ar-SA')};
     localStorage.setItem(SK_REPORT,JSON.stringify(lastReport));
-    renderReport(lastReport);
-    logActivity('استخرج تقرير أداء شامل','📊');
+    renderReport(lastReport);logActivity('استخرج تقرير أداء شامل','📊');
   }catch(e){showToast('❌ '+e.message);}
   btn.innerHTML='📊 استخراج تقرير الأداء الشامل';btn.disabled=false;
 }
 function renderReport(r){
   const titles=['💪 نقاط القوة','⚠️ نقاط الضعف','📈 مستوى النضج','🔥 الجرعة التحفيزية','🎯 الخطوة التالية'];
   const sections=r.text.split(/\d+\.\s+/).filter(Boolean);
-  document.getElementById('report-area').innerHTML=`<div style="font-size:10px;color:var(--text3);margin-bottom:8px;text-align:left;">${r.date}</div>${sections.map((s,i)=>`<div class="report-card"><div class="report-section-title">${titles[i]||'📌'}</div><div class="report-text">${s.trim()}</div></div>`).join('')}`;
+  document.getElementById('report-area').innerHTML=`<div style="font-size:10px;color:var(--text3);margin-bottom:8px;">${r.date}</div>${sections.map((s,i)=>`<div class="report-card"><div class="report-section-title">${titles[i]||'📌'}</div><div class="report-text">${s.trim()}</div></div>`).join('')}`;
 }
-function resetAll(){if(!confirm('مسح كل البيانات؟'))return;state={mastered:{},gymScore:0,memoryScore:0,memoryTotal:0};activityLog=[];lastReport=null;saveState();saveLog();localStorage.removeItem(SK_REPORT);updateHomeStats();showToast('🔄 تم الضبط');}
+
+// ══════════════════════════════════════════
+// UTILS
+// ══════════════════════════════════════════
 function setBar(b,p,v){const be=document.getElementById(b);const pe=document.getElementById(p);if(be)be.style.width=v+'%';if(pe)pe.textContent=v+'%';}
 function setText(id,val){const e=document.getElementById(id);if(e)e.textContent=val;}
-function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2800);}
+function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),3000);}
+
+// ══════════════════════════════════════════
+// INIT
+// ══════════════════════════════════════════
 loadState();
 document.getElementById('home-date').textContent=new Date().toLocaleDateString('ar-SA',{weekday:'long',day:'numeric',month:'long'});
 updateHomeStats();checkApiKey();
 const m=localStorage.getItem(SK_MOOD);if(m)document.getElementById('mood-'+m)?.classList.add(m);
 setText('memory-score',`${state.memoryScore||0}/${state.memoryTotal||0}`);
 setText('gym-score-badge',(state.gymScore||0)+' تحدي');
+if(lastReport)renderAnalytics();
 </script>
 </body>
 </html>
