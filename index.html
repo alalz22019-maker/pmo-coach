@@ -213,7 +213,7 @@ input:focus,textarea:focus{border-color:rgba(201,168,76,0.4);}
 // الثوابت ومفاتيح التخزين
 const SK='pmo_coach_v1', SK_API='pmo_gemini_key', SK_LOG='user_activity_log', SK_REPORT='pmo_last_report', SK_MOOD='pmo_mood';
 
-// قائمة المواضيع العشوائية لضمان عدم تكرار الأسئلة
+// قائمة المواضيع
 const TOPICS_POOL = [
   'Sudden 40% Budget Cuts', 'Key Resource Resignation Mid-Project', 'Vendor Bankruptcy During Delivery',
   'Force Majeure Natural Disaster', 'Stakeholder Political Conflict', 'Scope Creep from Executive Directive',
@@ -254,27 +254,22 @@ const MEMORY_DATA = [
   {facts:['المشاريع النشطة: 22','الميزانية الكلية للمحفظة: 120 مليون','المنهجية: Agile Hybrid'],q:'كم عدد المشاريع النشطة في المحفظة؟',a:'22'}
 ];
 
-// حالة التطبيق
 let state = { mastered:{}, gymScore:0, memoryScore:0, memoryTotal:0 };
 let activityLog = [], lastReport = null, currentLevel = 'operational', geminiCache = {};
 let boardroomHistory = [], boardroomLang = 'ar', recognition = null, isListening = false, currentTranscript = '';
 let challengeState = { active:false, timer:null, seconds:60, scenario:'' };
 
 // ==========================================
-// محرك الذكاء الاصطناعي (Gemini Core Engine)
+// تحديث API المباشر على أحدث موديل شغال 100%
 // ==========================================
 async function fetchFromGemini(prompt, apiKey, isChat = false, messages = []) {
-  // استخدام الموديل المستقر والأسرع المخصص للحسابات المدفوعة
-  const model = 'gemini-1.5-flash';
+  // هذا هو أحدث موديل Flash يعمل ومستقر
+  const model = 'gemini-2.0-flash';
   const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
   
-  // بناء هيكل الطلب مع رفع مستوى الإبداع لتجنب التكرار
   const bodyData = {
     contents: isChat ? messages : [{ parts: [{ text: prompt }] }],
-    generationConfig: { 
-        temperature: 0.95, // مستوى إبداع عالي
-        maxOutputTokens: 1024 
-    },
+    generationConfig: { temperature: 0.9, maxOutputTokens: 1024 },
     safetySettings: [
         { category: "HARM_CATEGORY_HARASSMENT", threshold: "BLOCK_NONE" },
         { category: "HARM_CATEGORY_HATE_SPEECH", threshold: "BLOCK_NONE" },
@@ -293,17 +288,15 @@ async function fetchFromGemini(prompt, apiKey, isChat = false, messages = []) {
     const data = await response.json();
     
     if (!response.ok) {
-      console.error("Gemini API Error Detail:", data);
       throw new Error(data.error?.message || `HTTP Error ${response.status}`);
     }
     
     if (data.candidates && data.candidates[0].content) {
       return data.candidates[0].content.parts[0].text;
     } else {
-      throw new Error('لم يقم الذكاء الاصطناعي بإرجاع استجابة نصية صالحة.');
+      throw new Error('لم يقم الذكاء الاصطناعي بإرجاع استجابة.');
     }
   } catch (error) {
-    console.error("Fetch request failed:", error);
     throw error;
   }
 }
@@ -327,7 +320,7 @@ function setText(id,val){var e=document.getElementById(id);if(e)e.textContent=va
 function showToast(msg){var t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(function(){t.classList.remove('show');},3000);}
 
 // ==========================================
-// وظائف القاموس التنفيذي
+// القاموس
 // ==========================================
 function setLevel(l){currentLevel=l;document.querySelectorAll('.level-tab').forEach(t=>t.classList.remove('active'));document.getElementById('tab-'+l.substring(0,3)).classList.add('active');renderLexicon();}
 function renderLexicon(){
@@ -369,7 +362,7 @@ async function explainWithGemini(idx, term) {
 function toggleMastered(idx){state.mastered[idx]=!state.mastered[idx];saveState();updateHomeStats();renderLexicon();if(state.mastered[idx]){logActivity('أتقن مصطلحاً جديداً','🧠');showToast('🧠 خطوة ممتازة نحو القيادة!');}}
 
 // ==========================================
-// وظائف النادي الذهني (التحدي والذاكرة)
+// التحدي والذاكرة
 // ==========================================
 async function startChallenge(){
   const key = getApiKey();
@@ -385,7 +378,7 @@ async function startChallenge(){
       scenario = scenario.trim().replace(/\n/g, ' ');
     } catch(e) {
       scenario = CRISES_FALLBACK[Math.floor(Math.random() * CRISES_FALLBACK.length)];
-      showToast('⚠️ تحذير اتصال: تم استخدام أزمة مسجلة مسبقاً.');
+      showToast('⚠️ تحذير اتصال: ' + e.message);
     }
   } else {
     scenario = CRISES_FALLBACK[Math.floor(Math.random() * CRISES_FALLBACK.length)];
@@ -467,7 +460,7 @@ function checkMemory(correct){
 }
 
 // ==========================================
-// وظائف غرفة الاجتماعات (المحاكاة الصوتية)
+// غرفة الاجتماعات (المحاكاة الصوتية)
 // ==========================================
 function initBoardroom(){
   const area = document.getElementById('chat-area');
@@ -508,7 +501,6 @@ async function startBoardroomSession(){
 function appendChat(type,text){const area=document.getElementById('chat-area'), id='msg-'+Date.now(), div=document.createElement('div'); div.className='chat-msg '+type; div.id=id; div.innerHTML=text; area.appendChild(div); area.scrollTop=area.scrollHeight; return id;}
 function updateChatMsg(id,text,type){const el=document.getElementById(id); if(el){el.innerHTML=text; if(type) el.className='chat-msg '+type;} document.getElementById('chat-area').scrollTop=99999;}
 
-// دمج التعرف على الصوت (Web Speech API)
 function toggleMic(){ if(isListening){stopMic();return;} startMic(); }
 function startMic(){
   const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
@@ -566,7 +558,7 @@ function clearBoardroom(){
 }
 
 // ==========================================
-// وظائف المستشار الذكي (تحليلات البيانات)
+// المستشار الذكي
 // ==========================================
 function renderAnalytics(){
   const el = document.getElementById('full-log');
@@ -604,9 +596,6 @@ function renderReport(r){
     sections.map((s,i) => `<div class="report-card"><div class="report-section-title">${titles[i]||'📌 استنتاج إضافي'}</div><div class="report-text">${s.trim().replace(/\n/g, '<br>')}</div></div>`).join('');
 }
 
-// ==========================================
-// التهيئة الأولية (Initialization)
-// ==========================================
 loadState();
 document.getElementById('home-date').textContent = new Date().toLocaleDateString('ar-SA', {weekday:'long', day:'numeric', month:'long'});
 updateHomeStats();
