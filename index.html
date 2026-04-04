@@ -223,23 +223,54 @@ let activityLog=[],lastReport=null,currentLevel='operational',geminiCache={};
 let boardroomHistory=[],boardroomLang='ar',recognition=null,isListening=false,currentTranscript='';
 let challengeState={active:false,timer:null,seconds:60,scenario:''};
 
-async function fetchFromGemini(prompt,apiKey){
-  const url='https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key='+apiKey;
-  const response=await fetch(url,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({contents:[{parts:[{text:prompt}]}],generationConfig:{temperature:0.9,maxOutputTokens:1024,topP:0.95,topK:64},safetySettings:[{category:'HARM_CATEGORY_HARASSMENT',threshold:'BLOCK_NONE'},{category:'HARM_CATEGORY_HATE_SPEECH',threshold:'BLOCK_NONE'},{category:'HARM_CATEGORY_SEXUALLY_EXPLICIT',threshold:'BLOCK_NONE'},{category:'HARM_CATEGORY_DANGEROUS_CONTENT',threshold:'BLOCK_NONE'}]})});
-  const data=await response.json();
-  if(!response.ok)throw new Error(data.error?.message||'HTTP '+response.status);
-  if(data.candidates&&data.candidates[0].content)return data.candidates[0].content.parts[0].text;
-  throw new Error('لم يتم إرجاع نص');
+// --- نظام القفز التلقائي المطور للـ API ---
+async function fetchFromGeminiWithFallback(bodyData, apiKey) {
+  const models = ['gemini-2.0-flash', 'gemini-1.5-flash', 'gemini-1.5-flash-8b'];
+  let lastErr = '';
+  
+  // دمج إعدادات الأمان والإبداع لضمان التنوع وعدم رفض الطلب
+  bodyData.safetySettings = [
+    {category:'HARM_CATEGORY_HARASSMENT',threshold:'BLOCK_NONE'},
+    {category:'HARM_CATEGORY_HATE_SPEECH',threshold:'BLOCK_NONE'},
+    {category:'HARM_CATEGORY_SEXUALLY_EXPLICIT',threshold:'BLOCK_NONE'},
+    {category:'HARM_CATEGORY_DANGEROUS_CONTENT',threshold:'BLOCK_NONE'}
+  ];
+  if(!bodyData.generationConfig) {
+      bodyData.generationConfig = { temperature: 0.9, maxOutputTokens: 1024 };
+  }
+
+  for (let m of models) {
+    try {
+      const res = await fetch('https://generativelanguage.googleapis.com/v1beta/models/'+m+':generateContent?key='+apiKey, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(bodyData)
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        lastErr = data.error?.message || 'HTTP ' + res.status;
+        console.warn(`Model ${m} failed:`, lastErr);
+        continue; // جرب الموديل اللي بعده
+      }
+      if (data.candidates && data.candidates[0].content) {
+        return data.candidates[0].content.parts[0].text;
+      }
+    } catch (e) {
+      lastErr = e.message;
+      console.warn(`Network error with ${m}:`, e);
+    }
+  }
+  throw new Error('فشل الاتصال بجميع النماذج. الخطأ: ' + lastErr);
 }
 
-async function fetchFromGeminiChat(messages,apiKey){
-  const url='https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key='+apiKey;
-  const response=await fetch(url,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({contents:messages,generationConfig:{temperature:0.9,maxOutputTokens:1024,topP:0.95,topK:64},safetySettings:[{category:'HARM_CATEGORY_HARASSMENT',threshold:'BLOCK_NONE'},{category:'HARM_CATEGORY_HATE_SPEECH',threshold:'BLOCK_NONE'},{category:'HARM_CATEGORY_SEXUALLY_EXPLICIT',threshold:'BLOCK_NONE'},{category:'HARM_CATEGORY_DANGEROUS_CONTENT',threshold:'BLOCK_NONE'}]})});
-  const data=await response.json();
-  if(!response.ok)throw new Error(data.error?.message||'HTTP '+response.status);
-  if(data.candidates&&data.candidates[0].content)return data.candidates[0].content.parts[0].text;
-  throw new Error('لم يتم إرجاع نص');
+async function fetchFromGemini(prompt, apiKey) {
+  return await fetchFromGeminiWithFallback({ contents: [{ parts: [{ text: prompt }] }] }, apiKey);
 }
+
+async function fetchFromGeminiChat(messages, apiKey) {
+  return await fetchFromGeminiWithFallback({ contents: messages }, apiKey);
+}
+// ------------------------------------
 
 function loadState(){try{const s=localStorage.getItem(SK);if(s)state={...state,...JSON.parse(s)};const l=localStorage.getItem(SK_LOG);if(l)activityLog=JSON.parse(l);const r=localStorage.getItem(SK_REPORT);if(r)lastReport=JSON.parse(r);}catch(e){}}
 function saveState(){try{localStorage.setItem(SK,JSON.stringify(state));}catch(e){}}
@@ -255,6 +286,7 @@ function renderHomeLog(){const el=document.getElementById('home-log');if(!activi
 function setLevel(l){currentLevel=l;document.querySelectorAll('.level-tab').forEach(t=>t.classList.remove('active'));document.getElementById('tab-'+l.substring(0,3)).classList.add('active');renderLexicon();}
 function renderLexicon(){const terms=TERMS[currentLevel];const base=currentLevel==='operational'?0:currentLevel==='tactical'?4:8;document.getElementById('flashcard-list').innerHTML=terms.map((t,i)=>{const idx=base+i;const m=state.mastered[idx];return'<div class="flashcard'+(m?' flipped':'')+'" id="fc-'+idx+'"><div class="fc-front" onclick="flipCard('+idx+')"><div class="fc-term">'+t.term+'</div><div class="fc-term-ar">'+t.ar+'</div><div class="fc-hint">انقر للتعريف ←</div></div><div class="fc-back"><div class="fc-def">'+t.def+'</div><div class="fc-example"><div class="fc-ex-label">مثال:</div>'+t.ex+'</div><button class="btn btn-blue btn-sm" onclick="explainWithGemini('+idx+',\''+t.term+'\')" id="explain-btn-'+idx+'" style="margin-bottom:8px;">✨ شرح Gemini</button><div class="gemini-result" id="gemini-'+idx+'"><div class="gemini-label">🤖 Gemini يشرح</div><div class="gemini-text" id="gemini-text-'+idx+'"></div></div><button class="mastered-btn'+(m?' done':'')+'" onclick="toggleMastered('+idx+')">'+(m?'✓ أتقنت':'أتقنت هذا المصطلح')+'</button></div></div>';}).join('');}
 function flipCard(i){document.getElementById('fc-'+i)?.classList.toggle('flipped');}
+
 async function explainWithGemini(idx,term){const key=getApiKey();if(!key){showToast('⚠️ أضف مفتاح Gemini أولاً');return;}const btn=document.getElementById('explain-btn-'+idx);const res=document.getElementById('gemini-'+idx);const txt=document.getElementById('gemini-text-'+idx);if(geminiCache[term]){txt.textContent=geminiCache[term];res.classList.add('visible');return;}btn.innerHTML='<span class="spinner"></span>';btn.disabled=true;try{const t=await fetchFromGemini('اشرح مصطلح "'+term+'" بأسلوب عملي لمدير PMO في مقابلة C-suite سعودية. 1) تعريف دقيق في جملتين 2) تطبيق في بيئة حكومية سعودية 3) جملة واحدة تقولها في المقابلة. بالعربية مختصراً.',key);geminiCache[term]=t;txt.textContent=t;res.classList.add('visible');logActivity('شرح Gemini: '+term,'✨');btn.innerHTML='✨ شرح Gemini';btn.disabled=false;}catch(e){txt.textContent='❌ '+e.message;res.classList.add('visible');btn.innerHTML='✨ شرح Gemini';btn.disabled=false;}}
 function toggleMastered(idx){state.mastered[idx]=!state.mastered[idx];saveState();updateHomeStats();renderLexicon();if(state.mastered[idx]){const all=[...TERMS.operational,...TERMS.tactical,...TERMS.executive];logActivity('إتقان: '+all[idx]?.term,'🧠');showToast('🧠 ممتاز!');}}
 
@@ -266,8 +298,8 @@ async function startChallenge(){
   if(key){
     try{
       const topic=TOPICS_POOL[Math.floor(Math.random()*TOPICS_POOL.length)];
-      const seed=Math.random().toString(36).substr(2,9);
-      scenario=await fetchFromGemini('You are a PMO crisis simulator. Generate a unique crisis scenario for a Saudi government PMO Director about: "'+topic+'". Write 2 sentences in Arabic ending with a question. Seed:'+seed,key);
+      const seed=Math.random().toString(36).substr(2,9); // لزيادة العشوائية
+      scenario=await fetchFromGemini('You are a PMO crisis simulator. Generate a COMPLETELY UNIQUE crisis scenario for a Saudi government PMO Director about: "'+topic+'". Make it exactly 2 sentences in Arabic ending with a question. Random Seed: '+seed,key);
       scenario=scenario.trim().replace(/\n/g,' ');
     }catch(e){
       scenario=CRISES_FALLBACK[Math.floor(Math.random()*CRISES_FALLBACK.length)];
@@ -316,8 +348,8 @@ async function startBoardroomSession(){
   var topic=TOPICS_POOL[Math.floor(Math.random()*TOPICS_POOL.length)];
   var seed=Math.random().toString(36).substr(2,9);
   var sysPrompt=boardroomLang==='en'
-    ?'You are a tough C-suite executive interviewer. Ask ONE unique unexpected question about: "'+topic+'". No common questions. Make it situational. Seed:'+seed+'. English only.'
-    :'أنت محاور تنفيذي صارم. اسأل سؤالاً واحداً فريداً عن: "'+topic+'". لا أسئلة شائعة. موقفي وصعب. Seed:'+seed+'. عربية فقط.';
+    ?'You are a tough C-suite executive interviewer. Ask ONE completely unique, unexpected situational question about: "'+topic+'". Do NOT ask generic questions. Random Seed:'+seed+'. English only.'
+    :'أنت محاور تنفيذي صارم. اسأل سؤالاً واحداً فريداً وصعباً عن: "'+topic+'". لا تكرر أسئلة سابقة. Seed:'+seed+'. عربية فقط.';
   appendChat('system',boardroomLang==='en'?'Session started':'الجلسة بدأت');
   var lid=appendChat('ai','<span class="spinner"></span>');
   try{
