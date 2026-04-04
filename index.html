@@ -6,7 +6,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="PMO Coach">
-<title>Executive PMO Coach 2.0</title>
+<title>Executive PMO Coach 3.0</title>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
 :root{--navy:#0a0e1a;--navy2:#111827;--navy3:#1a2236;--navy4:#243047;--gold:#c9a84c;--gold2:#e8c96a;--gold-dim:rgba(201,168,76,0.15);--green:#22c55e;--green-dim:rgba(34,197,94,0.12);--blue:#3b82f6;--blue-dim:rgba(59,130,246,0.1);--purple:#a855f7;--purple-dim:rgba(168,85,247,0.12);--red:#ef4444;--red-dim:rgba(239,68,68,0.12);--text:#f1f5f9;--text2:#94a3b8;--text3:#475569;--border:rgba(255,255,255,0.06);--border2:rgba(255,255,255,0.1);--r:16px;--safe-top:env(safe-area-inset-top,44px);--safe-bottom:env(safe-area-inset-bottom,34px);}
@@ -63,9 +63,8 @@ body{font-family:'IBM Plex Sans Arabic',sans-serif;background:var(--navy);color:
 .gemini-result{background:linear-gradient(135deg,rgba(59,130,246,0.08),rgba(201,168,76,0.05));border:1px solid rgba(59,130,246,0.15);border-radius:12px;padding:12px;margin-top:10px;display:none;}
 .gemini-result.visible{display:block;animation:fadeIn 0.4s ease;}
 .gemini-label{font-size:10px;font-weight:700;color:var(--blue);letter-spacing:0.5px;margin-bottom:6px;}
-/* حل مشكلة التنسيق والبتر */
 .gemini-text{font-size:13px;color:var(--text);line-height:1.8; word-wrap:break-word;}
-.gemini-text strong, .report-text strong, .chat-msg strong { color: var(--gold2); font-weight: 700; }
+.gemini-text strong, .report-text strong { color: var(--gold2); font-weight: 700; }
 .mastered-btn{width:100%;margin-top:8px;padding:9px;border-radius:10px;border:none;cursor:pointer;font-family:'IBM Plex Sans Arabic',sans-serif;font-size:12px;font-weight:600;background:var(--green-dim);color:var(--green);border:1px solid rgba(34,197,94,0.2);}
 .mastered-btn.done{background:var(--green);color:#000;}
 .timer-ring{width:80px;height:80px;position:relative;margin:0 auto 14px;}
@@ -74,17 +73,6 @@ body{font-family:'IBM Plex Sans Arabic',sans-serif;background:var(--navy);color:
 .timer-num{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-size:22px;font-weight:700;color:var(--gold);}
 .memory-card-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:12px 0;}
 .mem-card{background:var(--navy3);border:1px solid var(--border2);border-radius:12px;padding:12px;text-align:center;font-size:12px;line-height:1.5;}
-.chat-area{background:var(--navy3);border-radius:14px;padding:12px;margin-bottom:10px;min-height:240px;max-height:380px;overflow-y:auto;display:flex;flex-direction:column;gap:8px;}
-.chat-msg{padding:10px 12px;border-radius:12px;font-size:13px;line-height:1.6;max-width:90%; word-wrap:break-word;}
-.chat-msg.ai{background:var(--blue-dim);border:1px solid rgba(59,130,246,0.15);align-self:flex-start;}
-.chat-msg.user{background:var(--gold-dim);border:1px solid rgba(201,168,76,0.15);align-self:flex-end;text-align:right;}
-.chat-msg.system{background:var(--navy4);color:var(--text2);font-size:11px;text-align:center;align-self:center;}
-.chat-msg.error{background:var(--red-dim);border:1px solid rgba(239,68,68,0.2);color:var(--red);align-self:center;font-size:11px;text-align:center;}
-.voice-controls{display:flex;gap:8px;align-items:center;}
-.mic-btn{width:54px;height:54px;border-radius:50%;border:none;cursor:pointer;font-size:22px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
-.mic-btn.idle{background:var(--navy3);border:2px solid var(--border2);}
-.mic-btn.listening{background:var(--red-dim);border:2px solid var(--red);animation:pulse 1s infinite;}
-.mic-btn.processing{background:var(--blue-dim);border:2px solid var(--blue);}
 .report-card{background:linear-gradient(135deg,var(--navy3),var(--navy4));border:1px solid var(--border2);border-radius:var(--r);padding:16px;margin-bottom:10px;}
 .report-section-title{font-size:14px;font-weight:700;color:var(--gold);margin-bottom:8px;}
 .report-text{font-size:13px;color:var(--text);line-height:1.8; word-wrap:break-word;}
@@ -171,22 +159,26 @@ input:focus,textarea:focus{border-color:rgba(201,168,76,0.4);}
 </div>
 
 <div id="screen-boardroom" class="screen">
-  <div class="header"><div class="header-title">غرفة الاجتماعات</div><div class="header-sub">وضع المحادثة المستمرة (Live Mode)</div></div>
+  <div class="header"><div class="header-title">غرفة الاجتماعات</div><div class="header-sub">منصة المحاكاة الصوتية (Gemini Live)</div></div>
   <div class="content" style="padding-top:12px;">
-    <div class="card" style="margin-bottom:10px;">
-      <div style="display:flex;gap:8px;margin-bottom:10px;">
-        <button class="btn btn-sm btn-navy" onclick="setBoardroomLang('ar')" id="br-ar">🇸🇦 عربي</button>
-        <button class="btn btn-sm btn-navy" onclick="setBoardroomLang('en')" id="br-en">🇺🇸 English</button>
-        <button class="btn btn-sm btn-red" onclick="clearBoardroom()" style="margin-right:auto;">🗑 مسح</button>
-      </div>
-      <div class="chat-area" id="chat-area"></div>
-      <div class="voice-controls" style="margin-top:10px;">
-        <button class="mic-btn idle" id="mic-btn" onclick="toggleMic()">🎤</button>
-        <div style="flex:1;"><div id="transcript-preview" style="font-size:12px;color:var(--text2);min-height:20px;background:var(--navy3);border-radius:10px;padding:8px;"></div></div>
-        <button class="btn btn-sm btn-blue" id="send-voice-btn" onclick="sendTranscript()" style="display:none;">إرسال</button>
+    <div class="welcome-banner" style="background:var(--navy2); border-color:var(--blue-dim); padding:14px;">
+      <div style="font-size:12px; color:var(--text); line-height:1.7;">
+        💡 <b>استراتيجية جديدة:</b><br>
+        1. ولّد سيناريو المقابلة وانسخه من هنا.<br>
+        2. افتح تطبيق <b>Gemini الرسمي</b> في جوالك.<br>
+        3. الصق السيناريو وشغّل وضع المحادثة الصوتية (Live 🎙️).<br>
+        4. بعد النهاية، اطلب منه ملخصاً والصقه في صفحة "المستشار".
       </div>
     </div>
-    <button class="btn btn-gold" id="start-session-btn" onclick="startBoardroomSession()">🎬 بدء جلسة تفاوض مستمرة</button>
+    
+    <div class="card">
+      <div class="card-title" style="margin-bottom:12px;">🎯 توليد سيناريو المقابلة</div>
+      <button class="btn btn-navy" onclick="generatePrompt('ar')" style="margin-bottom:8px;">توليد سيناريو (عربي) 🇸🇦</button>
+      <button class="btn btn-navy" onclick="generatePrompt('en')" style="margin-bottom:12px;">توليد سيناريو (English) 🇺🇸</button>
+      
+      <textarea id="live-prompt-area" rows="6" readonly placeholder="سيظهر السيناريو هنا جاهزاً للنسخ..." style="font-size:12px; display:none; margin-bottom:8px;"></textarea>
+      <button class="btn btn-blue" id="copy-prompt-btn" onclick="copyLivePrompt()" style="display:none;">نسخ السيناريو 📋</button>
+    </div>
   </div>
   <div class="safe-bottom"></div>
 </div>
@@ -194,6 +186,13 @@ input:focus,textarea:focus{border-color:rgba(201,168,76,0.4);}
 <div id="screen-analytics" class="screen">
   <div class="header"><div class="header-title">المستشار الذكي</div><div class="header-sub">تحليل شامل لنموك المهني</div></div>
   <div class="content" style="padding-top:12px;">
+    
+    <div class="card" style="border-color:rgba(201,168,76,0.3);">
+      <div class="card-title">تكامل البيانات (اختياري)</div>
+      <div style="font-size:11px; color:var(--text2); margin-bottom:8px;">إذا أجريت محاكاة في تطبيق Gemini الخارجي، الصق ملخصه هنا لدمجه في التقرير:</div>
+      <textarea id="external-feedback" rows="3" placeholder="الصق تقييم Gemini الخارجي هنا (إن وجد)..."></textarea>
+    </div>
+
     <button class="btn btn-gold" id="report-btn" onclick="generateReport()" style="margin-bottom:14px;">📊 توليد تقرير الأداء القيادي</button>
     <div id="report-area"></div>
     <div class="section-label" style="padding-right:0;">سجل النشاط الشامل</div>
@@ -206,7 +205,7 @@ input:focus,textarea:focus{border-color:rgba(201,168,76,0.4);}
   <div class="nav-item active" id="nav-home" onclick="switchNav('home')"><span class="nav-icon">🏠</span><span class="nav-label">الرئيسية</span></div>
   <div class="nav-item" id="nav-lexicon" onclick="switchNav('lexicon');renderLexicon()"><span class="nav-icon">📚</span><span class="nav-label">القاموس</span></div>
   <div class="nav-item" id="nav-gym" onclick="switchNav('gym')"><span class="nav-icon">🧠</span><span class="nav-label">النادي</span></div>
-  <div class="nav-item" id="nav-boardroom" onclick="switchNav('boardroom');initBoardroom()"><span class="nav-icon">🎤</span><span class="nav-label">الاجتماع</span></div>
+  <div class="nav-item" id="nav-boardroom" onclick="switchNav('boardroom')"><span class="nav-icon">🎤</span><span class="nav-label">الاجتماع</span></div>
   <div class="nav-item" id="nav-analytics" onclick="switchNav('analytics');renderAnalytics()"><span class="nav-icon">📊</span><span class="nav-label">المستشار</span></div>
 </nav>
 <div class="toast" id="toast"></div>
@@ -255,11 +254,8 @@ const MEMORY_DATA = [
 
 let state = { mastered:{}, gymScore:0, memoryScore:0, memoryTotal:0 };
 let activityLog = [], lastReport = null, currentLevel = 'operational', geminiCache = {};
-let boardroomHistory = [], boardroomLang = 'ar', recognition = null, isListening = false, currentTranscript = '';
-let challengeState = { active:false, timer:null, seconds:60, scenario:'' };
-let isContinuousVoice = false; // التحكم في حلقة المحادثة الصوتية المستمرة
 
-// --- دالة تنسيق الماركدوان (لتحويل النجوم إلى خط عريض) ---
+// تحويل رموز الماركدوان
 function formatAI(text) {
   if(!text) return '';
   return text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
@@ -267,17 +263,14 @@ function formatAI(text) {
              .replace(/\n/g, '<br>');
 }
 
-// --- محرك الذكاء الاصطناعي (مع زيادة سعة الكلمات وتحديد الموديل الصحيح) ---
-async function fetchFromGemini(prompt, apiKey, isChat = false, messages = []) {
-  const model = 'gemini-2.5-flash'; // الموديل الأحدث المستقر
+// دالة الاتصال الرئيسية 
+async function fetchFromGemini(prompt, apiKey) {
+  const model = 'gemini-2.5-flash';
   const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
   
   const bodyData = {
-    contents: isChat ? messages : [{ parts: [{ text: prompt }] }],
-    generationConfig: { 
-        temperature: 0.9, 
-        maxOutputTokens: 4096 // زيادة الحد الأقصى لمنع بتر النصوص
-    },
+    contents: [{ parts: [{ text: prompt }] }],
+    generationConfig: { temperature: 0.9, maxOutputTokens: 4096 },
     safetySettings: [
         { category: "HARM_CATEGORY_HARASSMENT", threshold: "BLOCK_NONE" },
         { category: "HARM_CATEGORY_HATE_SPEECH", threshold: "BLOCK_NONE" },
@@ -294,19 +287,11 @@ async function fetchFromGemini(prompt, apiKey, isChat = false, messages = []) {
     });
     
     const data = await response.json();
+    if (!response.ok) throw new Error(data.error?.message || `HTTP Error ${response.status}`);
     
-    if (!response.ok) {
-      throw new Error(data.error?.message || `HTTP Error ${response.status}`);
-    }
-    
-    if (data.candidates && data.candidates[0].content) {
-      return data.candidates[0].content.parts[0].text;
-    } else {
-      throw new Error('لم يقم الذكاء الاصطناعي بإرجاع استجابة صالحة.');
-    }
-  } catch (error) {
-    throw error;
-  }
+    if (data.candidates && data.candidates[0].content) return data.candidates[0].content.parts[0].text;
+    throw new Error('لم يقم الذكاء الاصطناعي بإرجاع استجابة صالحة.');
+  } catch (error) { throw error; }
 }
 
 function loadState(){try{const s=localStorage.getItem(SK);if(s)state={...state,...JSON.parse(s)};const l=localStorage.getItem(SK_LOG);if(l)activityLog=JSON.parse(l);const r=localStorage.getItem(SK_REPORT);if(r)lastReport=JSON.parse(r);}catch(e){}}
@@ -461,146 +446,34 @@ function checkMemory(correct){
 }
 
 // ==========================================
-// غرفة الاجتماعات (التحديث التفاعلي المستمر)
+// غرفة الاجتماعات المحدثة (منصة التوليد)
 // ==========================================
-function initBoardroom(){
-  const area = document.getElementById('chat-area');
-  if(!area.children.length) area.innerHTML = '<div class="chat-msg system">اضغط الزر بالأسفل لتفعيل الاتصال المستمر مع الذكاء الاصطناعي</div>';
-}
-function setBoardroomLang(lang){
-  boardroomLang = lang;
-  document.getElementById('br-ar').style.opacity = lang==='ar' ? '1' : '0.5';
-  document.getElementById('br-en').style.opacity = lang==='en' ? '1' : '0.5';
-}
-
-async function startBoardroomSession(){
-  const key = getApiKey(); if(!key){ showToast('⚠️ يرجى تنشيط مفتاح Gemini أولاً'); return; }
-  
-  isContinuousVoice = true; // تفعيل وضع المحادثة المستمرة
-  boardroomHistory = []; document.getElementById('chat-area').innerHTML = '';
-  document.getElementById('start-session-btn').style.display = 'none'; // إخفاء زر البدء أثناء الجلسة
-  
+function generatePrompt(lang) {
   const topic = TOPICS_POOL[Math.floor(Math.random() * TOPICS_POOL.length)];
-  const seed = Math.random().toString(36).substring(2, 10);
-  const sysPrompt = boardroomLang === 'en'
-    ? `Act as a hostile C-Suite executive interviewing a PMO Director. Ask ONE extremely difficult, unique situational question about: "${topic}". Do NOT ask generic questions. Wait for my answer, then reply back aggressively and ask a follow-up. Keep all replies under 3 sentences. Random Seed: ${seed}. Reply in English only.`
-    : `أنت مسؤول تنفيذي صارم تحاور مدير PMO. اسأل سؤالاً واحداً صعباً ومفاجئاً عن: "${topic}". لا تكرر الأسئلة المعتادة. انتظر إجابتي ثم قاطعني أو اسألني سؤالاً استطرادياً. اجعل ردودك دائماً قصيرة (جملتين كحد أقصى). Seed: ${seed}. الرد باللغة العربية فقط.`;
+  const area = document.getElementById('live-prompt-area');
   
-  appendChat('system', boardroomLang==='en'?'Live Session Active. AI is speaking...':'جلسة تفاعلية مستمرة. استمع للمحاور...');
-  const lid = appendChat('ai', '<span class="spinner"></span>');
-  
-  try {
-    boardroomHistory = [
-      { role: 'user', parts: [{ text: sysPrompt }] },
-      { role: 'model', parts: [{ text: 'مفهوم.' }] },
-      { role: 'user', parts: [{ text: 'ابدأ.' }] }
-    ];
-    const q = await fetchFromGemini('', key, true, boardroomHistory);
-    boardroomHistory.push({ role: 'model', parts: [{ text: q }] });
-    updateChatMsg(lid, formatAI(q));
-    speakText(q, true); // إرسال true يعني: افتح المايك تلقائياً بعد الكلام
-  } catch(e) { 
-    updateChatMsg(lid, '❌ خطأ في النظام: ' + e.message, 'error'); 
-    isContinuousVoice = false;
-    document.getElementById('start-session-btn').style.display = 'block';
+  let prompt = '';
+  if (lang === 'ar') {
+      prompt = `أريد إجراء محاكاة صوتية معك عبر ميزة (Gemini Live) لمقابلة عمل تنفيذية لمدير مكتب مشاريع (PMO).\n\nموضوع الأزمة: "${topic}".\n\nدورك: تقمص شخصية مدير تنفيذي صارم جداً (C-Suite). اسألني سؤالاً واحداً فقط وصعباً حول هذه الأزمة، ثم انتظر إجابتي الصوتية. بعد إجابتي، قاطعني أو ناقشني بحدة.\n\nتوجيهات هامة: اجعل ردودك دائماً قصيرة جداً (جملة أو جملتين) لتناسب المحادثة الصوتية، ولا تخرج عن الشخصية أبداً. إذا فهمت، قل "مستعد" لكي أبدأ.`;
+  } else {
+      prompt = `I want to do a voice simulation with you using the (Gemini Live) feature for an executive job interview for a PMO Director role.\n\nCrisis Topic: "${topic}".\n\nYour Role: Act as a very strict C-Suite executive. Ask me ONE difficult, situational question about this crisis, then wait for my voice answer. After my answer, aggressively follow up or interrupt me.\n\nImportant: Keep your replies very short (1-2 sentences max) to suit a live voice chat, and never break character. If you understand, say "Ready" so I can begin.`;
   }
+  
+  area.value = prompt;
+  area.style.display = 'block';
+  document.getElementById('copy-prompt-btn').style.display = 'flex';
+  logActivity('ولّد سيناريو محاكاة جديد', '📋');
 }
 
-function appendChat(type,text){const area=document.getElementById('chat-area'), id='msg-'+Date.now(), div=document.createElement('div'); div.className='chat-msg '+type; div.id=id; div.innerHTML=text; area.appendChild(div); area.scrollTop=area.scrollHeight; return id;}
-function updateChatMsg(id,text,type){const el=document.getElementById(id); if(el){el.innerHTML=text; if(type) el.className='chat-msg '+type;} document.getElementById('chat-area').scrollTop=99999;}
-
-function toggleMic(){ if(isListening){stopMic();return;} startMic(); }
-function startMic(){
-  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
-  if(!SR){ showToast('⚠️ متصفحك الحالي لا يدعم التعرف على الصوت.'); return; }
-  
-  recognition = new SR();
-  recognition.lang = boardroomLang === 'en' ? 'en-US' : 'ar-SA';
-  recognition.continuous = false; recognition.interimResults = true;
-  
-  recognition.onstart = () => { isListening = true; setMicState('listening'); };
-  recognition.onresult = (e) => {
-    let t = ''; for(let i=e.resultIndex; i<e.results.length; i++) t+=e.results[i][0].transcript;
-    currentTranscript = t; document.getElementById('transcript-preview').textContent = t;
-    document.getElementById('send-voice-btn').style.display = t ? 'flex' : 'none';
-  };
-  recognition.onend = () => { 
-      isListening = false; setMicState('idle'); 
-      // إذا كان المستخدم في وضع Live وانتهى من الكلام والتسجيل، نرسل النص تلقائياً
-      if(isContinuousVoice && currentTranscript.trim().length > 0) {
-          sendTranscript();
-      }
-  };
-  recognition.onerror = (e) => { 
-      isListening = false; setMicState('idle'); 
-      if(e.error === 'not-allowed' && isContinuousVoice) {
-          showToast('نظام الجوال يمنع فتح المايك تلقائياً، الرجاء الضغط على 🎤 للتحدث.');
-      }
-  };
-  
-  try { recognition.start(); } catch(e) { console.log('Mic start error', e); }
-}
-
-function stopMic(){ if(recognition) recognition.stop(); isListening = false; setMicState('idle'); }
-function setMicState(s){ const btn = document.getElementById('mic-btn'); btn.className = 'mic-btn ' + s; btn.textContent = s==='listening'?'⏹':s==='processing'?'⏳':'🎤'; }
-
-async function sendTranscript(){
-  if(!currentTranscript.trim()) return;
-  const key = getApiKey(); if(!key){ showToast('⚠️ مفتاح Gemini غير متوفر'); return; }
-  const text = currentTranscript; currentTranscript = '';
-  document.getElementById('transcript-preview').textContent = ''; document.getElementById('send-voice-btn').style.display = 'none';
-  
-  appendChat('user', text);
-  boardroomHistory.push({ role: 'user', parts: [{ text: text }] });
-  setMicState('processing');
-  const lid = appendChat('ai', '<span class="spinner"></span>');
-  
-  try {
-    const reply = await fetchFromGemini('', key, true, boardroomHistory);
-    boardroomHistory.push({ role: 'model', parts: [{ text: reply }] });
-    updateChatMsg(lid, formatAI(reply));
-    speakText(reply, true); // استمرار الحلقة بفتح المايك بعد الرد
-    logActivity('تفاعل في غرفة الاجتماعات (Live)', '🎤');
-  } catch(e) { 
-      updateChatMsg(lid, '❌ خطأ في الاتصال: ' + e.message, 'error'); 
-      isContinuousVoice = false;
-      document.getElementById('start-session-btn').style.display = 'block';
-  }
-  setMicState('idle');
-}
-
-function speakText(t, autoOpenMic = false){
-  if(!window.speechSynthesis) return;
-  window.speechSynthesis.cancel();
-  
-  // تنظيف النص من علامات الماركدوان قبل النطق لتجنب نطق كلمة "نجمة نجمة"
-  const cleanTextForSpeech = t.replace(/\*/g, '').replace(/#/g, '');
-  
-  const u = new SpeechSynthesisUtterance(cleanTextForSpeech);
-  u.lang = boardroomLang === 'en' ? 'en-US' : 'ar-SA';
-  u.rate = 0.95;
-  
-  u.onend = function() {
-      // حلقة المايك المستمرة
-      if (autoOpenMic && isContinuousVoice) {
-          setTimeout(() => { startMic(); }, 600); // تأخير بسيط ليكون طبيعياً
-      }
-  };
-  
-  window.speechSynthesis.speak(u);
-}
-
-function clearBoardroom(){
-  isContinuousVoice = false; // إيقاف الحلقة
-  boardroomHistory = [];
-  document.getElementById('chat-area').innerHTML = '<div class="chat-msg system">تم إيقاف الجلسة ومسح السجل.</div>';
-  document.getElementById('start-session-btn').style.display = 'block';
-  if(window.speechSynthesis) window.speechSynthesis.cancel();
-  if(isListening) stopMic();
+function copyLivePrompt() {
+    const area = document.getElementById('live-prompt-area');
+    area.select();
+    document.execCommand('copy');
+    showToast('✅ تم نسخ السيناريو! افتح تطبيق Gemini الآن.');
 }
 
 // ==========================================
-// المستشار الذكي وتحليل البيانات
+// المستشار الذكي وتحليل البيانات الشامل
 // ==========================================
 function renderAnalytics(){
   const el = document.getElementById('full-log');
@@ -616,10 +489,13 @@ async function generateReport(){
   const btn = document.getElementById('report-btn');
   btn.innerHTML = '<span class="spinner spinner-gold"></span> جاري التحليل المعرفي للبيانات...'; btn.disabled = true;
   
+  const externalFeedback = document.getElementById('external-feedback').value.trim();
+  let externalText = externalFeedback ? `\n\nتقييم خارجي إضافي من محادثة (Gemini Live) قام بها المستخدم مؤخراً:\n"${externalFeedback}"\nرجاءً ادمج هذا التقييم الخارجي مع التحليل النهائي.` : '';
+
   try {
     const logData = activityLog.slice(0, 40).map(l => `${l.time}: ${l.text}`).join('\n');
     const termsCount = Object.values(state.mastered).filter(Boolean).length;
-    const prompt = `أنت مدرب قيادات عليا (Executive Coach). قم بتحليل بيانات هذا المدير بدقة بناءً على سجله:\n\nالسجل المرجعي:\n${logData}\n\nالإحصاءات الحيوية: أتقن ${termsCount}/12 مصطلح تنفيذي، أكمل ${state.gymScore||0} تحدي أزمة، وأجاب ${state.memoryScore||0} تمرين ذاكرة.\n\nأريد تقريراً عميقاً مقسماً بوضوح كالتالي:\n1. نقاط القوة القيادية\n2. الفجوات ونقاط الضعف التي تحتاج لتدخل\n3. مستوى النضج المعرفي الحالي\n4. جرعة حقيقة صارمة (لا تجامله أبدًا)\n5. التوصية للخطوة القادمة\n\nأجب بفقرة كاملة لكل نقطة دون قطع النص أبداً، بالعربية فقط وبشكل احترافي.`;
+    const prompt = `أنت مدرب قيادات عليا (Executive Coach). قم بتحليل بيانات هذا المدير بدقة بناءً على سجله:\n\nالسجل المرجعي:\n${logData}\n\nالإحصاءات الحيوية: أتقن ${termsCount}/12 مصطلح تنفيذي، أكمل ${state.gymScore||0} تحدي أزمة، وأجاب ${state.memoryScore||0} تمرين ذاكرة.${externalText}\n\nأريد تقريراً عميقاً مقسماً بوضوح كالتالي:\n1. نقاط القوة القيادية\n2. الفجوات ونقاط الضعف التي تحتاج لتدخل\n3. مستوى النضج المعرفي الحالي\n4. جرعة حقيقة صارمة (لا تجامله أبدًا)\n5. التوصية للخطوة القادمة\n\nأجب بفقرة كاملة لكل نقطة دون قطع النص أبداً، بالعربية فقط وبشكل احترافي.`;
     
     const text = await fetchFromGemini(prompt, key);
     lastReport = { text: text, date: new Date().toLocaleString('ar-SA') };
