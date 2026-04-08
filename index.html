@@ -6,7 +6,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="PMO Coach">
-<title>Executive PMO Coach 3.0</title>
+<title>Executive PMO Coach</title>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
 :root{--navy:#0a0e1a;--navy2:#111827;--navy3:#1a2236;--navy4:#243047;--gold:#c9a84c;--gold2:#e8c96a;--gold-dim:rgba(201,168,76,0.15);--green:#22c55e;--green-dim:rgba(34,197,94,0.12);--blue:#3b82f6;--blue-dim:rgba(59,130,246,0.1);--purple:#a855f7;--purple-dim:rgba(168,85,247,0.12);--red:#ef4444;--red-dim:rgba(239,68,68,0.12);--text:#f1f5f9;--text2:#94a3b8;--text3:#475569;--border:rgba(255,255,255,0.06);--border2:rgba(255,255,255,0.1);--r:16px;--safe-top:env(safe-area-inset-top,44px);--safe-bottom:env(safe-area-inset-bottom,34px);}
@@ -71,7 +71,7 @@ body{font-family:'IBM Plex Sans Arabic',sans-serif;background:var(--navy);color:
 .timer-ring svg{transform:rotate(-90deg);}
 .timer-ring circle{fill:none;stroke-width:5;}.timer-ring .bg{stroke:var(--navy4);}.timer-ring .fg{stroke:var(--gold);stroke-linecap:round;transition:stroke-dashoffset 1s linear;}
 .timer-num{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-size:22px;font-weight:700;color:var(--gold);}
-.memory-card-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:12px 0;}
+.memory-card-grid{display:grid;gap:8px;margin:12px 0;}
 .mem-card{background:var(--navy3);border:1px solid var(--border2);border-radius:12px;padding:12px;text-align:center;font-size:12px;line-height:1.5;}
 .report-card{background:linear-gradient(135deg,var(--navy3),var(--navy4));border:1px solid var(--border2);border-radius:var(--r);padding:16px;margin-bottom:10px;}
 .report-section-title{font-size:14px;font-weight:700;color:var(--gold);margin-bottom:8px;}
@@ -163,11 +163,12 @@ input:focus,textarea:focus{border-color:rgba(201,168,76,0.4);}
   <div class="content" style="padding-top:12px;">
     <div class="welcome-banner" style="background:var(--navy2); border-color:var(--blue-dim); padding:14px;">
       <div style="font-size:12px; color:var(--text); line-height:1.7;">
-        💡 <b>استراتيجية جديدة:</b><br>
+        💡 <b>استراتيجية التنفيذ:</b><br>
         1. ولّد سيناريو المقابلة وانسخه من هنا.<br>
         2. افتح تطبيق <b>Gemini الرسمي</b> في جوالك.<br>
         3. الصق السيناريو وشغّل وضع المحادثة الصوتية (Live 🎙️).<br>
-        4. بعد النهاية، اطلب منه ملخصاً والصقه في صفحة "المستشار".
+        4. عند الانتهاء قل: "انتهت المقابلة" ليطبع لك الملخص.<br>
+        5. الصق الملخص في صفحة "المستشار" للتحليل النهائي.
       </div>
     </div>
     
@@ -211,6 +212,9 @@ input:focus,textarea:focus{border-color:rgba(201,168,76,0.4);}
 <div class="toast" id="toast"></div>
 
 <script>
+// ==========================================
+// الإعدادات وقاعدة البيانات الأساسية
+// ==========================================
 const SK='pmo_coach_v1', SK_API='pmo_gemini_key', SK_LOG='user_activity_log', SK_REPORT='pmo_last_report', SK_MOOD='pmo_mood';
 
 const TOPICS_POOL = [
@@ -245,17 +249,38 @@ const TERMS = {
 };
 
 const CRISES_FALLBACK = ['اكتشفت أن المورد الرئيسي للمشروع قد أفلس والموعد النهائي بعد أسبوع. ماذا تفعل؟','الراعي التنفيذي يطلب إضافة ميزات جديدة ورفض زيادة الميزانية. كيف تتصرف؟','استقال مدير المشروع التقني بشكل مفاجئ في مرحلة حرجة. ما هي خطتك الفورية؟'];
-const MEMORY_DATA = [
-  {facts:['الميزانية المعتمدة: 15 مليون ريال','تاريخ التسليم: ديسمبر 2026','المخاطر العالية: 4 مخاطر'],q:'كم عدد المخاطر العالية في المشروع؟',a:'4'},
-  {facts:['حجم الفريق: 35 موظفاً','مؤشر الأداء CPI: 0.92','الحالة: متأخر أسبوعين'],q:'ما هو مؤشر الأداء CPI؟',a:'0.92'},
-  {facts:['العميل: وزارة النقل','إجمالي التغييرات (CRs): 7','المرحلة: اختبار القبول'],q:'كم عدد التغييرات المعتمدة (CRs)؟',a:'7'},
-  {facts:['المشاريع النشطة: 22','الميزانية الكلية للمحفظة: 120 مليون','المنهجية: Agile Hybrid'],q:'كم عدد المشاريع النشطة في المحفظة؟',a:'22'}
+
+// قاعدة بيانات تمرين الذاكرة المحدثة (20 عنصر متنوع)
+const MEM_DATABASE = [
+  { text: 'مؤشر الأداء CPI: 0.85', q: 'ما هي قيمة مؤشر الأداء CPI؟', a: '0.85' },
+  { text: 'مؤشر الجدول SPI: 1.12', q: 'ما هي قيمة مؤشر الجدول SPI؟', a: '1.12' },
+  { text: 'الميزانية: 45 مليون ريال', q: 'كم تبلغ الميزانية المذكورة (بالمليون)؟', a: '45' },
+  { text: 'عدد الموارد: 120 موظف', q: 'كم عدد الموارد في المشروع؟', a: '120' },
+  { text: 'المخاطر العالية: 7 مخاطر', q: 'كم عدد المخاطر العالية؟', a: '7' },
+  { text: 'تباين التكلفة (CV): -40K', q: 'ما هي قيمة تباين التكلفة المذكورة؟', a: '-40K' },
+  { text: 'منهجية: Agile Scrum', q: 'ما هي المنهجية المذكورة باللغة الإنجليزية؟', a: 'Agile Scrum' },
+  { text: 'مصفوفة: RACI', q: 'ما هو اسم مصفوفة الصلاحيات المذكورة؟', a: 'RACI' },
+  { text: 'نظام: EVM', q: 'ما هو النظام المذكور لقياس الأداء (بالحروف الإنجليزية)؟', a: 'EVM' },
+  { text: 'إطار العمل: PMBOK', q: 'ما هو إطار العمل المرجعي المذكور؟', a: 'PMBOK' },
+  { text: 'المنهجية: PRINCE2', q: 'اذكر المنهجية البريطانية المذكورة في البيانات؟', a: 'PRINCE2' },
+  { text: 'مرحلة: اختبار القبول (UAT)', q: 'في أي مرحلة يمر المشروع الآن؟', a: 'اختبار القبول' },
+  { text: 'المشكلة: زحف النطاق', q: 'ما هي المشكلة الرئيسية المذكورة في المشروع؟', a: 'زحف النطاق' },
+  { text: 'الوثيقة: ميثاق المشروع', q: 'ما هو اسم الوثيقة التأسيسية المذكورة؟', a: 'ميثاق المشروع' },
+  { text: 'المشروع: التحول الصحي', q: 'ما هو اسم المشروع الاستراتيجي المذكور؟', a: 'التحول الصحي' },
+  { text: 'النظام: ملف المريض الموحد', q: 'ما هو النظام التقني أو الملف المذكور؟', a: 'ملف المريض' },
+  { text: 'الاعتماد: سباهي CBAHI', q: 'ما هو اعتماد الجودة المذكور في البيانات؟', a: 'سباهي' },
+  { text: 'الحالة: متأخر 3 أسابيع', q: 'ما هي حالة المشروع من حيث الجدول الزمني؟', a: 'متأخر' },
+  { text: 'مؤشر OKR: إنجاز 80%', q: 'كم نسبة الإنجاز في مؤشر الـ OKR المذكور؟', a: '80%' },
+  { text: 'الجهة: التجمع الصحي', q: 'ما هي الجهة أو الكيان المذكور؟', a: 'التجمع الصحي' }
 ];
 
 let state = { mastered:{}, gymScore:0, memoryScore:0, memoryTotal:0 };
 let activityLog = [], lastReport = null, currentLevel = 'operational', geminiCache = {};
+let challengeState = { active:false, timer:null, seconds:60, scenario:'' };
 
-// تحويل رموز الماركدوان
+// ==========================================
+// محرك الذكاء الاصطناعي والمساعدات
+// ==========================================
 function formatAI(text) {
   if(!text) return '';
   return text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
@@ -263,14 +288,13 @@ function formatAI(text) {
              .replace(/\n/g, '<br>');
 }
 
-// دالة الاتصال الرئيسية 
 async function fetchFromGemini(prompt, apiKey) {
-  const model = 'gemini-2.5-flash';
+  const model = 'gemini-2.5-flash'; // الموديل الموحد والصحيح
   const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
   
   const bodyData = {
     contents: [{ parts: [{ text: prompt }] }],
-    generationConfig: { temperature: 0.9, maxOutputTokens: 4096 },
+    generationConfig: { temperature: 0.9, maxOutputTokens: 4096 }, // منع بتر النصوص
     safetySettings: [
         { category: "HARM_CATEGORY_HARASSMENT", threshold: "BLOCK_NONE" },
         { category: "HARM_CATEGORY_HATE_SPEECH", threshold: "BLOCK_NONE" },
@@ -288,7 +312,6 @@ async function fetchFromGemini(prompt, apiKey) {
     
     const data = await response.json();
     if (!response.ok) throw new Error(data.error?.message || `HTTP Error ${response.status}`);
-    
     if (data.candidates && data.candidates[0].content) return data.candidates[0].content.parts[0].text;
     throw new Error('لم يقم الذكاء الاصطناعي بإرجاع استجابة صالحة.');
   } catch (error) { throw error; }
@@ -309,6 +332,9 @@ function setBar(b,p,v){var be=document.getElementById(b);var pe=document.getElem
 function setText(id,val){var e=document.getElementById(id);if(e)e.textContent=val;}
 function showToast(msg){var t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(function(){t.classList.remove('show');},3000);}
 
+// ==========================================
+// القاموس
+// ==========================================
 function setLevel(l){currentLevel=l;document.querySelectorAll('.level-tab').forEach(t=>t.classList.remove('active'));document.getElementById('tab-'+l.substring(0,3)).classList.add('active');renderLexicon();}
 function renderLexicon(){
   const terms = TERMS[currentLevel];
@@ -348,9 +374,11 @@ async function explainWithGemini(idx, term) {
   }
   btn.innerHTML = '✨ اطلب شرح أعمق من Gemini'; btn.disabled = false;
 }
-
 function toggleMastered(idx){state.mastered[idx]=!state.mastered[idx];saveState();updateHomeStats();renderLexicon();if(state.mastered[idx]){logActivity('أتقن مصطلحاً جديداً','🧠');showToast('🧠 خطوة ممتازة نحو القيادة!');}}
 
+// ==========================================
+// تحدي الـ 60 ثانية
+// ==========================================
 async function startChallenge(){
   const key = getApiKey();
   const area = document.getElementById('challenge-area');
@@ -412,33 +440,63 @@ async function submitChallenge(){
   area.innerHTML = `<div class="report-card" style="margin-bottom:10px;"><div class="report-section-title">🤖 تغذية راجعة تنفيذية</div><div class="report-text">${formatAI(fb)}</div></div><button class="btn btn-gold" onclick="startChallenge()">مواجهة أزمة جديدة ←</button>`;
 }
 
+// ==========================================
+// ذاكرة المدير (النظام المتقدم)
+// ==========================================
 function startMemory(){
-  const idx = Math.floor(Math.random() * MEMORY_DATA.length); const data = MEMORY_DATA[idx];
+  const score = state.memoryScore || 0;
+  let count = 3; let time = 5; let levelName = "مبتدئ";
+  if (score >= 5 && score < 15) { count = 4; time = 5; levelName = "متوسط"; }
+  else if (score >= 15 && score < 30) { count = 5; time = 4; levelName = "متقدم"; }
+  else if (score >= 30) { count = 6; time = 4; levelName = "خبير"; }
+
+  let shuffled = [...MEM_DATABASE].sort(() => 0.5 - Math.random());
+  let selected = shuffled.slice(0, count);
+  let target = selected[Math.floor(Math.random() * selected.length)];
+
   const area = document.getElementById('memory-area');
   area.innerHTML = `
-    <div style="text-align:center;color:var(--text2);font-size:12px;margin-bottom:8px;">ركز جيداً — ستختفي البيانات بعد 5 ثوانٍ</div>
-    <div class="memory-card-grid">${data.facts.map(f => `<div class="mem-card">${f}</div>`).join('')}</div>
-    <div style="text-align:center;"><span id="mem-countdown" style="font-size:28px;font-weight:700;color:var(--purple);">5</span></div>
+    <div style="display:flex; justify-content:space-between; margin-bottom:10px; padding-bottom:6px; border-bottom:1px solid var(--border2); font-size:11px; color:var(--gold);">
+        <span>المستوى: ${levelName} (عناصر: ${count})</span>
+        <span>⏱️ ${time} ثوانٍ للحفظ</span>
+    </div>
+    <div style="text-align:center;color:var(--text2);font-size:12px;margin-bottom:12px;">ركز في التقاط التفاصيل التالية...</div>
+    <div class="memory-card-grid" style="grid-template-columns:repeat(${count > 3 ? 2 : 3}, 1fr);">${selected.map(item => `<div class="mem-card">${item.text}</div>`).join('')}</div>
+    <div style="text-align:center; margin-top:12px;"><span id="mem-countdown" style="font-size:32px;font-weight:700;color:var(--purple);">${time}</span></div>
   `;
-  let c = 5;
-  let t = setInterval(() => { c--; setText('mem-countdown', c); if(c <= 0) { clearInterval(t); showMemoryQ(data); } }, 1000);
+  
+  let c = time;
+  let t = setInterval(() => { 
+      c--; 
+      setText('mem-countdown', c); 
+      if(c <= 0) { clearInterval(t); showMemoryQ(target); } 
+  }, 1000);
 }
-function showMemoryQ(data){
+
+function showMemoryQ(targetItem){
   document.getElementById('memory-area').innerHTML = `
-    <div style="background:var(--navy3);border-radius:12px;padding:14px;margin-bottom:10px;font-size:14px;font-weight:600;">${data.q}</div>
-    <input type="text" id="mem-answer" placeholder="اكتب الرقم أو الإجابة بدقة..." style="margin-bottom:8px;">
-    <button class="btn btn-purple" onclick="checkMemory('${data.a}')">تأكيد الإجابة</button>
+    <div style="background:var(--navy3);border-radius:12px;padding:14px;margin-bottom:10px;font-size:14px;font-weight:600;color:var(--gold); border:1px solid var(--border2);">
+        🧩 ${targetItem.q}
+    </div>
+    <input type="text" id="mem-answer" placeholder="اكتب الإجابة بدقة أو المصطلح..." style="margin-bottom:8px;">
+    <button class="btn btn-purple" onclick="checkMemory('${targetItem.a}', '${targetItem.text}')">تأكيد الإجابة</button>
   `;
 }
-function checkMemory(correct){
+
+function checkMemory(correctAnswer, fullText){
   const ans = (document.getElementById('mem-answer')?document.getElementById('mem-answer').value:'').trim().toLowerCase().replace(/\s/g,'');
-  const ok = ans.includes(correct.toLowerCase().replace(/\s/g,''));
+  const correctClean = correctAnswer.toLowerCase().replace(/\s/g,'');
+  
+  const ok = ans.length > 0 && (correctClean.includes(ans) || ans.includes(correctClean));
+  
   state.memoryScore = (state.memoryScore||0) + (ok?1:0); state.memoryTotal = (state.memoryTotal||0) + 1; saveState();
   setText('memory-score', state.memoryScore+'/'+state.memoryTotal);
+  
   document.getElementById('memory-area').innerHTML = `
     <div style="text-align:center;padding:16px;">
       <div style="font-size:40px;margin-bottom:8px;">${ok?'✅':'❌'}</div>
-      <div style="font-size:14px;font-weight:600;color:${ok?'var(--green)':'var(--red)'};">${ok?'استرجاع مثالي للبيانات!':'البيانات الصحيحة كانت: '+correct}</div>
+      <div style="font-size:14px;font-weight:600;color:${ok?'var(--green)':'var(--red)'};">${ok?'استرجاع مثالي للبيانات!':'للأسف، الإجابة الدقيقة كانت:'}</div>
+      ${!ok ? `<div style="margin-top:6px; font-size:12px; color:var(--text2); background:var(--navy3); padding:8px; border-radius:8px;">${fullText}</div>` : ''}
     </div>
     <button class="btn btn-purple" onclick="startMemory()" style="margin-top:8px;">تحدي ذاكرة جديد ←</button>
   `;
@@ -446,7 +504,7 @@ function checkMemory(correct){
 }
 
 // ==========================================
-// غرفة الاجتماعات المحدثة (منصة التوليد)
+// غرفة الاجتماعات (منصة التوليد)
 // ==========================================
 function generatePrompt(lang) {
   const topic = TOPICS_POOL[Math.floor(Math.random() * TOPICS_POOL.length)];
@@ -495,7 +553,7 @@ async function generateReport(){
   try {
     const logData = activityLog.slice(0, 40).map(l => `${l.time}: ${l.text}`).join('\n');
     const termsCount = Object.values(state.mastered).filter(Boolean).length;
-    const prompt = `أنت مدرب قيادات عليا (Executive Coach). قم بتحليل بيانات هذا المدير بدقة بناءً على سجله:\n\nالسجل المرجعي:\n${logData}\n\nالإحصاءات الحيوية: أتقن ${termsCount}/12 مصطلح تنفيذي، أكمل ${state.gymScore||0} تحدي أزمة، وأجاب ${state.memoryScore||0} تمرين ذاكرة.${externalText}\n\nأريد تقريراً عميقاً مقسماً بوضوح كالتالي:\n1. نقاط القوة القيادية\n2. الفجوات ونقاط الضعف التي تحتاج لتدخل\n3. مستوى النضج المعرفي الحالي\n4. جرعة حقيقة صارمة (لا تجامله أبدًا)\n5. التوصية للخطوة القادمة\n\nأجب بفقرة كاملة لكل نقطة دون قطع النص أبداً، بالعربية فقط وبشكل احترافي.`;
+    const prompt = `أنت مدرب قيادات عليا (Executive Coach). قم بتحليل بيانات هذا المدير بدقة بناءً على سجله:\n\nالسجل المرجعي:\n${logData}\n\nالإحصاءات الحيوية: أتقن ${termsCount}/12 مصطلح تنفيذي، أكمل ${state.gymScore||0} تحدي أزمة، وأجاب ${state.memoryScore||0} تمرين ذاكرة.${externalText}\n\nأريد تقريراً عميقاً مقسماً بوضوح كالتالي:\n1. نقاط القوة القيادية\n2. الفجوات ونقاط الضعف التي تحتاج لتدخل\n3. مستوى النضج المعرفي الحالي\n4. جرعة حقيقة صارمة (لا تجامله أبدًا)\n5. التوصية للخطوة القادمة\n\nتعليمات صارمة جداً للتنسيق: ابدأ التقرير فوراً بالرقم "1. " بدون أي مقدمة ترحيبية أو كلام إضافي قبلها. اجعل كل نقطة في فقرة واحدة مركزة وتأكد من إنهاء آخر كلمة في التقرير بنقطة.`;
     
     const text = await fetchFromGemini(prompt, key);
     lastReport = { text: text, date: new Date().toLocaleString('ar-SA') };
@@ -509,11 +567,18 @@ async function generateReport(){
 
 function renderReport(r){
   const titles = ['💪 نقاط القوة القيادية', '⚠️ الفجوات ومناطق الخطر', '📈 النضج المعرفي', '🔥 الجرعة الصارمة', '🎯 الخطوة الاستراتيجية القادمة'];
-  const sections = r.text.split(/\d+\.\s+/).filter(Boolean);
+  
+  // مقص برمجي لحذف المقدمات الزائدة لضمان تطابق العناوين
+  let cleanText = r.text.replace(/^[\s\S]*?(?=1\.\s)/, '');
+  
+  const sections = cleanText.split(/\d+\.\s+/).filter(Boolean);
   document.getElementById('report-area').innerHTML = `<div style="font-size:10px;color:var(--text3);margin-bottom:8px;">تاريخ التقرير: ${r.date}</div>` + 
     sections.map((s,i) => `<div class="report-card"><div class="report-section-title">${titles[i]||'📌 استنتاج إضافي'}</div><div class="report-text">${formatAI(s.trim())}</div></div>`).join('');
 }
 
+// ==========================================
+// التهيئة الأولية
+// ==========================================
 loadState();
 document.getElementById('home-date').textContent = new Date().toLocaleDateString('ar-SA', {weekday:'long', day:'numeric', month:'long'});
 updateHomeStats();
